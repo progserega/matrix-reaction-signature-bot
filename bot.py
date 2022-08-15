@@ -7,6 +7,7 @@ import logging
 from logging import handlers
 import sys
 import json
+import re
 import os
 import traceback
 import datetime
@@ -58,12 +59,13 @@ async def message_cb(room, event):
 
   # проверяем, что обращаются к нам:
   nick_name = room.user_name(session["user_id"])
-  if re.search(' *%s *'%nick_name,event.body)) is not None:
-    command = re.sub(' *%s *'%nick_name, '', event.body)
-    if async commands.process_command(room, event, command) == False:
+  log.debug("nick_name=%s"%nick_name)
+  if re.search(' *%s *'%nick_name,event.body) is not None:
+    command = re.sub(' *%s *:* *'%nick_name, '', event.body)
+    if await commands.process_command(room, event, command) == False:
       log.error("commands.process_command()")
       return False
-  if async set_read_marker(room,event) == False:
+  if await matrix_api.set_read_marker(room,event) == False:
     log.error("matrix_api.set_read_marker()")
     return False
   return True
@@ -113,7 +115,7 @@ async def main():
     log.info("login by session")
 
   client.add_event_callback(message_cb, nio.RoomMessageText)
-  client.add_event_callback(unknown_cb, nio.RoomMessage)
+  #client.add_event_callback(unknown_cb, nio.RoomMessage)
 
   # инициализация модулей:
   if sql.init(log,config) == False:

@@ -54,23 +54,24 @@ def connect_to_db():
     return False
   return True
 
-def add_signature(room_id,mxid,signature,signature_descr):
+def add_signature(room_id,mxid,signature,signature_author,signature_descr):
   global config
   global client
   global log
 
   try:
     # формируем sql-запрос:
-    columns = "mxid, room_id, signature, signature_time_create, description_signature"
-    values = "%(mxid)s, %(room_id)s, %(signature)s, %(signature_time_create)d, %(description_signature)s"%\
+    columns = "mxid, room_id, signature, signature_author, signature_time_create, description_signature"
+    values = "'%(mxid)s','%(room_id)s', '%(signature)s', '%(signature_author)s', %(signature_time_create)s, '%(description_signature)s'"%\
       {\
-        "msid":mxid,\
+        "mxid":mxid,\
         "room_id":room_id,\
         "signature":signature,\
-        "signature_time_create":time.now(),\
+        "signature_author":signature_author,\
+        "signature_time_create":psycopg2.TimestampFromTicks(time.time()),\
         "description_signature":signature_descr\
       }
-    sql="insert INTO tbl_users_info () VALUES (%s)"%(columns,values)
+    sql="insert INTO tbl_users_info (%s) VALUES (%s)"%(columns,values)
     log.debug("sql='%s'"%sql)
     try:
       cur.execute(sql)
@@ -86,6 +87,7 @@ def add_signature(room_id,mxid,signature,signature_descr):
       except psycopg2.Error as e:
         log.error("sql error: %s" % e.pgerror)
         return False
+      return False
 
   except Exception as e:
     log.error(get_exception_traceback_descr(e))

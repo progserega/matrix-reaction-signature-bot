@@ -26,6 +26,25 @@ def init(log_param,config_param, client_param):
   log.info("success matrix_api module")
   return True
 
+async def send_text(room,text):
+  global config
+  global client
+  global log
+  content = {
+        "body": text,
+        "msgtype": "m.text"
+      }
+  try:
+    resp = await client.room_send(room.room_id, message_type="m.room.message", content=content)
+    if isinstance(resp, nio.RoomMessagesError):
+      log.warning("client.room_send() failed with response = {resp}.")
+      return False
+    log.debug("st reaction successfully")
+  except Exception:
+    log.error(f"set reaction failed.")
+    return False
+  return True
+
 async def send_emotion(room,event,emotion_text):
   global config
   global client
