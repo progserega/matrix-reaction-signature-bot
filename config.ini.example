@@ -1,0 +1,31 @@
+#=============  Настройки баз данных: ==============
+[database]
+db_host = localhost
+db_name= matrix_rs_bot
+db_user = matrix_rs_bot
+db_passwd = XXXXXXXXX
+
+#============ logging: ===============
+[logging]
+debug = yes
+
+log_path = matrix-reaction-signature-bot.log
+# how match keep backup log files:
+log_backup_count = 30
+# can be:
+# 'S' - Seconds
+# 'M' - Minutes
+# 'H' - Hours
+# 'D' - Days
+# 'W0'-'W6' - Weekday (0=Monday)
+# 'midnight' - Roll over at midnight
+log_backup_when = midnight
+debug_save_normalized_tiff = yes
+
+
+#===================== Индивидуальные настройки для бота =============
+[matrix]
+matrix_server = matrix.org
+matrix_login = matrix_rs_bot
+matrix_passwd = XXXXXX
+session_store_path = session.json
