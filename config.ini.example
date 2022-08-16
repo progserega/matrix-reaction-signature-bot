@@ -29,3 +29,13 @@ matrix_server = matrix.org
 matrix_login = matrix_rs_bot
 matrix_passwd = XXXXXX
 session_store_path = session.json
+
+[powers]
+# ban, invite, kick, redact, state_default, events_default, users_default or integer (10,20,50 etc):
+
+# power level for change user signature and enable/disable it:
+power_level_for_signature = ban
+# power level for change user description (each user can change its own description):
+power_level_for_user_descr = users_default
+# power level for admin rule_interruption:
+power_level_for_rule_interruption = ban

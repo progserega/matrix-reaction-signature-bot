@@ -69,6 +69,33 @@ def parse_command_line(commandline):
     log.error(get_exception_traceback_descr(e))
     return None
 
+def is_power_level_for_signature(room,mxid):
+  global config
+  global client
+  global log
+  try:
+    log.debug("start function")
+    need_power_level_config = config["powers"]["power_level_for_signature"]
+    try:
+      need_power_level_integer = int(need_power_level_config)
+    except:
+      log.debug("power_level_for_signature is not int")
+      # пробуем через имя:
+      if hasattr(room.power_levels.defaults, need_power_level_config):
+        need_power_level_integer = getattr(room.power_levels.defaults, need_power_level_config)
+      else:
+        log.warning("unknown power_level alias in config - set default as 'ban'")
+        # значение по-умолчанию - 'ban':
+        need_power_level_integer = room.power_levels.defaults.ban
+    # прповеряем - есть ли нужные права у пользователя:
+    if room.power_levels.users[mxid] >= need_power_level_integer:
+      return True
+    else:
+      return False
+  except Exception as e:
+    log.error(get_exception_traceback_descr(e))
+    return False
+
 async def process_command(room,event,commandline):
   global config
   global client
@@ -98,6 +125,16 @@ async def process_command(room,event,commandline):
     return True
 
   elif command == "add_signature":
+    # проверяем права доступа:
+    if is_power_level_for_signature(room,event.sender) == False:
+      log.warning("no power level for this")
+      text="""you need more power level for this command"""
+      log.warning(text)
+      if await matrix_api.send_text(room,text) == False:
+        log.error("matrix_api.send_text()")
+        return False
+      return True
+
     if len(parameters) < 3:
       help_text="""command `add_signature` need 3 params.
 syntax:

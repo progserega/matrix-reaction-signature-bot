@@ -56,6 +56,7 @@ async def message_cb(room, event):
   log.debug("start function")
   #log.debug(room.room_id)
   #log.debug(event)
+  log.debug(room.power_levels)
 
   # проверяем, что обращаются к нам:
   nick_name = room.user_name(session["user_id"])
