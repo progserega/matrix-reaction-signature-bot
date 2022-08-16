@@ -96,3 +96,28 @@ def add_signature(room_id,mxid,signature,signature_author,signature_descr):
     return False
   return True
 
+
+def get_signature(room_id,mxid):
+  global config
+  global client
+  global log
+  item = None
+  try:
+    time_execute=time.time()
+    # формируем sql-запрос:
+    sql="select signature from tbl_users_info where room_id='%s' and mxid='%s'"%(room_id,mxid)
+    log.debug("sql='%s'"%sql)
+    try:
+      cur.execute(sql)
+      item = cur.fetchone()
+    except psycopg2.Error as e:
+      log.error("sql error: %s" % e.pgerror)
+      return None
+    if item==None:
+      log.debug("no signature records for room_id=%s and mxid=%s"%(room_id,mxid))
+      return None
+    log.debug("execute function time=%f"%(time.time()-time_execute))
+    return item[0]
+  except Exception as e:
+    log.error(get_exception_traceback_descr(e))
+    return None

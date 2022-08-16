@@ -65,6 +65,15 @@ async def message_cb(room, event):
     if await commands.process_command(room, event, command) == False:
       log.error("commands.process_command()")
       return False
+
+  # обычное сообщение:
+  # проверяем, есть ли подписи для автора:
+  signature = sql.get_signature(room.room_id, event.sender)
+  if signature != None:
+    if await matrix_api.send_emotion(room,event,signature) == False:
+      log.error("matrix_api.send_emotion()")
+      return False
+
   if await matrix_api.set_read_marker(room,event) == False:
     log.error("matrix_api.set_read_marker()")
     return False
