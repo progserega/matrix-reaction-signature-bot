@@ -331,6 +331,7 @@ example:
           log.error("matrix_api.send_text()")
           return False
         return False
+      log.debug(ret)
       if ret == 0:
         text = "no such user in db: %s"%signature_user_mxid
         log.debug(text)

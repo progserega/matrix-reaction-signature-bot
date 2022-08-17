@@ -224,7 +224,7 @@ def get_signature_descr(room_id,mxid):
     log.debug("start function")
     time_execute=time.time()
     # формируем sql-запрос:
-    sql="select signature,signature_author,signature_time_create,signature_show,signature_description from tbl_users_info where room_id='%s' and mxid='%s' and signature_show=True"%(room_id,mxid)
+    sql="select signature,signature_author,signature_time_create,signature_show,signature_description from tbl_users_info where room_id='%s' and mxid='%s'"%(room_id,mxid)
     log.debug("sql='%s'"%sql)
     try:
       cur.execute(sql)
