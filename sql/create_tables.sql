@@ -5,8 +5,8 @@ create table tbl_users_info(
 	signature varchar(255) default null,
 	signature_author varchar(255) default null,
   signature_time_create timestamp DEFAULT null,
-  show_signature boolean  DEFAULT TRUE,
-	description_signature varchar(2048) default null,
+  signature_show boolean  DEFAULT TRUE,
+	signature_description varchar(2048) default null,
   rule_interruption_active_count integer DEFAULT 0,
   rule_interruption_count_all integer DEFAULT 0,
 	user_description varchar(2048) default null,
@@ -21,8 +21,8 @@ comment on column tbl_users_info.room_id is 'Идентификатор комн
 comment on column tbl_users_info.signature is 'Подпись у пользователя';
 comment on column tbl_users_info.signature_author is 'кто установил подпись (MXID)';
 comment on column tbl_users_info.signature_time_create is 'Время создания подписи у пользователя';
-comment on column tbl_users_info.show_signature is 'Флаг, определяющий показывать или нет подпись пользователя';
-comment on column tbl_users_info.description_signature is 'Описание подписи';
+comment on column tbl_users_info.signature_show is 'Флаг, определяющий показывать или нет подпись пользователя';
+comment on column tbl_users_info.signature_description is 'Описание подписи';
 comment on column tbl_users_info.rule_interruption_active_count is 'Текущее количество активных замечаний о нарушении правил пользователем';
 comment on column tbl_users_info.rule_interruption_count_all is 'Общее количество нарушений правил пользователем за всю историю наблюдений';
 comment on column tbl_users_info.user_description is 'Описание пользователя';

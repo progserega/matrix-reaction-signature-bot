@@ -66,13 +66,13 @@ def update_signature(room_id,mxid,signature,signature_author,signature_descr):
   try:
     log.debug("start function")
     # формируем sql-запрос:
-    columns = "signature, signature_author, signature_time_create, description_signature"
-    values = "'%(signature)s', '%(signature_author)s', %(signature_time_create)s, '%(description_signature)s'"%\
+    columns = "signature, signature_author, signature_time_create, signature_description"
+    values = "'%(signature)s', '%(signature_author)s', %(signature_time_create)s, '%(signature_description)s'"%\
       {\
         "signature":signature,\
         "signature_author":signature_author,\
         "signature_time_create":psycopg2.TimestampFromTicks(time.time()),\
-        "description_signature":signature_descr\
+        "signature_description":signature_descr\
       }
     sql="update tbl_users_info SET (%s) = (%s) where mxid='%s' and room_id='%s'"%(columns,values,mxid,room_id)
     log.debug("sql='%s'"%sql)
@@ -107,15 +107,15 @@ def insert_signature(room_id,mxid,signature,signature_author,signature_descr):
   try:
     log.debug("start function")
     # формируем sql-запрос:
-    columns = "mxid, room_id, signature, signature_author, signature_time_create, description_signature"
-    values = "'%(mxid)s','%(room_id)s', '%(signature)s', '%(signature_author)s', %(signature_time_create)s, '%(description_signature)s'"%\
+    columns = "mxid, room_id, signature, signature_author, signature_time_create, signature_description"
+    values = "'%(mxid)s','%(room_id)s', '%(signature)s', '%(signature_author)s', %(signature_time_create)s, '%(signature_description)s'"%\
       {\
         "mxid":mxid,\
         "room_id":room_id,\
         "signature":signature,\
         "signature_author":signature_author,\
         "signature_time_create":psycopg2.TimestampFromTicks(time.time()),\
-        "description_signature":signature_descr\
+        "signature_description":signature_descr\
       }
     sql="insert INTO tbl_users_info (%s) VALUES (%s) RETURNING user_id"%(columns,values)
     log.debug("sql='%s'"%sql)
@@ -149,7 +149,7 @@ def enable_signature(room_id,mxid,enable_flag):
 
   try:
     # формируем sql-запрос:
-    sql="update tbl_users_info SET show_signature=%s where mxid='%s' and room_id='%s'"%(enable_flag,mxid,room_id)
+    sql="update tbl_users_info SET signature_show=%s where mxid='%s' and room_id='%s'"%(enable_flag,mxid,room_id)
     log.debug("sql='%s'"%sql)
     try:
       cur.execute(sql)
@@ -178,7 +178,11 @@ def add_signature(room_id,mxid,signature,signature_author,signature_descr):
   global conn
   global cur
   log.debug("start function")
-  if check_user_exist(room_id,mxid) is None:
+  ret=check_user_exist(room_id,mxid) 
+  if ret is None:
+    log.error("sql.check_user_exist()")
+    return False
+  if ret == 0:
     return insert_signature(room_id,mxid,signature,signature_author,signature_descr)
   else:
     return update_signature(room_id,mxid,signature,signature_author,signature_descr)
@@ -193,7 +197,7 @@ def get_signature(room_id,mxid):
     log.debug("start function")
     time_execute=time.time()
     # формируем sql-запрос:
-    sql="select signature from tbl_users_info where room_id='%s' and mxid='%s' and show_signature=True"%(room_id,mxid)
+    sql="select signature from tbl_users_info where room_id='%s' and mxid='%s' and signature_show=True"%(room_id,mxid)
     log.debug("sql='%s'"%sql)
     try:
       cur.execute(sql)
@@ -210,6 +214,33 @@ def get_signature(room_id,mxid):
     log.error(get_exception_traceback_descr(e))
     return None
 
+def get_signature_descr(room_id,mxid):
+  global config
+  global log
+  global conn
+  global cur
+  item = None
+  try:
+    log.debug("start function")
+    time_execute=time.time()
+    # формируем sql-запрос:
+    sql="select signature,signature_author,signature_time_create,signature_show,signature_description from tbl_users_info where room_id='%s' and mxid='%s' and signature_show=True"%(room_id,mxid)
+    log.debug("sql='%s'"%sql)
+    try:
+      cur.execute(sql)
+      item = cur.fetchone()
+    except psycopg2.Error as e:
+      log.error("sql error: %s" % e.pgerror)
+      return None
+    if item==None:
+      log.debug("no signature records for room_id=%s and mxid=%s"%(room_id,mxid))
+      return None
+    log.debug("execute function time=%f"%(time.time()-time_execute))
+    return item
+  except Exception as e:
+    log.error(get_exception_traceback_descr(e))
+    return None
+
 def check_user_exist(room_id,mxid):
   global config
   global log
@@ -220,7 +251,7 @@ def check_user_exist(room_id,mxid):
     log.debug("start function")
     time_execute=time.time()
     # формируем sql-запрос:
-    sql="select user_id from tbl_users_info where room_id='%s' and mxid='%s'"%(room_id,mxid)
+    sql="select count(user_id) from tbl_users_info where room_id='%s' and mxid='%s'"%(room_id,mxid)
     log.debug("sql='%s'"%sql)
     try:
       cur.execute(sql)
@@ -228,9 +259,8 @@ def check_user_exist(room_id,mxid):
     except psycopg2.Error as e:
       log.error("sql error: %s" % e.pgerror)
       return None
-    if item==None:
+    if item[0]==0:
       log.debug("no user records for room_id=%s and mxid=%s"%(room_id,mxid))
-      return None
     log.debug("execute function time=%f"%(time.time()-time_execute))
     return item[0]
   except Exception as e:

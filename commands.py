@@ -118,14 +118,15 @@ async def process_command(room,event,commandline):
     help_text="""I am admin reaction bot.
 1. help - this help
 2. add_signature - add signature to user
-3. show_signature - enable/disable showing signature for user
+3. enable_signature - enable/disable showing signature for user
+4. show_signature - show signature for user
     """
     if await matrix_api.send_text(room,help_text) == False:
       log.error("matrix_api.send_text()")
       return False
     return True
 
-  elif command == "show_signature":
+  elif command == "enable_signature":
     # проверяем права доступа:
     if is_power_level_for_signature(room,event.sender) == False:
       log.warning("no power level for this")
@@ -140,13 +141,13 @@ async def process_command(room,event,commandline):
       help_text="""This command disable or enable showing signature for user.
 Disabling - is not delete signature in db, but it will not be show.
 
-command `show_signature` need 2 params.
+command `enable_signature` need 2 params.
 syntax:
 
-  my_botname_in_this_room: show_signature user_name_for_signature yes/no
+  my_botname_in_this_room: enable_signature user_name_for_signature yes/no
 
 example:
-  rsbot: show_signature Baduser yes"
+  rsbot: enable_signature Baduser yes
 
       """
       if await matrix_api.send_text(room,help_text) == False:
@@ -274,6 +275,99 @@ example:
         return False
       return True
 
+  elif command == "show_signature":
+
+    if len(parameters) < 1:
+      help_text="""This command show signature record for user.
+
+command `show_signature` need 1 params.
+syntax:
+
+  my_botname_in_this_room: show_signature user_name
+
+example:
+  rsbot: show_signature Baduser
+
+      """
+      if await matrix_api.send_text(room,help_text) == False:
+        log.error("matrix_api.send_text()")
+        return False
+      return True
+    else:
+      # параметров достаточно:
+      signature_user = parameters[0]
+
+      if signature_user in room.users:
+        # пользователь указан по MXID:
+        signature_user_mxid = signature_user
+      elif signature_user in room.names:
+        # пользователь указан по имени
+        if len(room.names[signature_user])>1:
+          # несколько пользователей с одинаковыми именами:
+          text="""nickname %s not uniqum in this room. Please, select user by mxid (as @user:server.com)"""%signature_user
+          log.warning(text)
+          if await matrix_api.send_text(room,text) == False:
+            log.error("matrix_api.send_text()")
+            return False
+          return True
+        else:
+          # пользователь указан по MXID:
+          signature_user_mxid = room.names[signature_user][0]
+      else:
+        # неизвестный пользователь:
+        text="""nickname %s not known. Please, correct, or select user by mxid (as @user:server.com)"""%signature_user
+        log.warning(text)
+        if await matrix_api.send_text(room,text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return True
+      log.debug("signature_user_mxid = %s"%signature_user_mxid)
+
+      ret = sql.check_user_exist(room.room_id, signature_user_mxid)
+      if ret is None:
+        log.error("sql.check_user_exist()")
+        text="""internal error sql.check_user_exist()"""
+        if await matrix_api.send_text(room,text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return False
+      if ret == 0:
+        text = "no such user in db: %s"%signature_user_mxid
+        log.debug(text)
+        if await matrix_api.send_text(room,text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return False
+
+      # получаем данные о записи:
+      ret = sql.get_signature_descr(room.room_id, signature_user_mxid)
+      if ret is None:
+        log.error("sql.get_signature_descr()")
+        text="""internal error sql.get_signature_descr()"""
+        if await matrix_api.send_text(room,text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return False
+      # формируем отчёт:
+      text = """User %(signature_user_mxid)s:
+1. signature: %(signature)s
+2. Author of signature: %(signature_author)s
+3. Time create/update of signature: %(signature_time_create)s
+4. Show signature: %(signature_show)s
+5. Description signature: %(signature_descr)s
+"""%{\
+      "signature_user_mxid":signature_user_mxid,\
+      "signature":ret[0],\
+      "signature_author":ret[1],\
+      "signature_time_create":ret[2],\
+      "signature_show":ret[3],\
+      "signature_descr":ret[4]\
+      }
+      # показываем отчёт:
+      if await matrix_api.send_text(room,text) == False:
+        log.error("matrix_api.send_text()")
+        return False
+      return True
 
   else:
     # unknown command:
