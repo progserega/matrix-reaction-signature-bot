@@ -118,11 +118,91 @@ async def process_command(room,event,commandline):
     help_text="""I am admin reaction bot.
 1. help - this help
 2. add_signature - add signature to user
+3. show_signature - enable/disable showing signature for user
     """
     if await matrix_api.send_text(room,help_text) == False:
       log.error("matrix_api.send_text()")
       return False
     return True
+
+  elif command == "show_signature":
+    # проверяем права доступа:
+    if is_power_level_for_signature(room,event.sender) == False:
+      log.warning("no power level for this")
+      text="""you need more power level for this command"""
+      log.warning(text)
+      if await matrix_api.send_text(room,text) == False:
+        log.error("matrix_api.send_text()")
+        return False
+      return True
+
+    if len(parameters) < 2:
+      help_text="""This command disable or enable showing signature for user.
+Disabling - is not delete signature in db, but it will not be show.
+
+command `show_signature` need 2 params.
+syntax:
+
+  my_botname_in_this_room: show_signature user_name_for_signature yes/no
+
+example:
+  rsbot: show_signature Baduser yes"
+
+      """
+      if await matrix_api.send_text(room,help_text) == False:
+        log.error("matrix_api.send_text()")
+        return False
+      return True
+    else:
+      # параметров достаточно:
+      signature_user = parameters[0]
+      enable_flag_str = parameters[1]
+
+      if signature_user in room.users:
+        # пользователь указан по MXID:
+        signature_user_mxid = signature_user
+      elif signature_user in room.names:
+        # пользователь указан по имени
+        if len(room.names[signature_user])>1:
+          # несколько пользователей с одинаковыми именами:
+          text="""nickname %s not uniqum in this room. Please, select user by mxid (as @user:server.com)"""%signature_user
+          log.warning(text)
+          if await matrix_api.send_text(room,text) == False:
+            log.error("matrix_api.send_text()")
+            return False
+          return True
+        else:
+          # пользователь указан по MXID:
+          signature_user_mxid = room.names[signature_user][0]
+      else:
+        # неизвестный пользователь:
+        text="""nickname %s not known. Please, correct, or select user by mxid (as @user:server.com)"""%signature_user
+        log.warning(text)
+        if await matrix_api.send_text(room,text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return True
+      log.debug("signature_user_mxid = %s"%signature_user_mxid)
+      enable_flag = False
+      if enable_flag_str.lower() == "yes":
+        enable_flag = True
+
+      if sql.enable_signature(room.room_id, signature_user_mxid, enable_flag) == False:
+        log.error("sql.enable_signature()")
+        text="""internal error sql.enable_signature()"""
+        if await matrix_api.send_text(room,text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return False
+      # уведомляем пользователя, что всё получилось:
+      if enable_flag == True:
+        text="""success enable signature to user %s"""%signature_user_mxid
+      else:
+        text="""success disable signature to user %s"""%signature_user_mxid
+      if await matrix_api.send_text(room,text) == False:
+        log.error("matrix_api.send_text()")
+        return False
+      return True
 
   elif command == "add_signature":
     # проверяем права доступа:
@@ -192,7 +272,6 @@ example:
       if await matrix_api.send_text(room,text) == False:
         log.error("matrix_api.send_text()")
         return False
-
       return True
 
 
