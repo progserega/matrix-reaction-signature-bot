@@ -54,7 +54,48 @@ def connect_to_db():
     return False
   return True
 
-def add_signature(room_id,mxid,signature,signature_author,signature_descr):
+def update_signature(room_id,mxid,signature,signature_author,signature_descr):
+  global config
+  global client
+  global log
+
+  try:
+    # формируем sql-запрос:
+    columns = "signature, signature_author, signature_time_create, description_signature"
+    values = "'%(signature)s', '%(signature_author)s', %(signature_time_create)s, '%(description_signature)s'"%\
+      {\
+        "signature":signature,\
+        "signature_author":signature_author,\
+        "signature_time_create":psycopg2.TimestampFromTicks(time.time()),\
+        "description_signature":signature_descr\
+      }
+    sql="update tbl_users_info SET (%s) = (%s) where mxid='%s' and room_id='%s' RETURNING user_id"%(columns,values,mxid,room_id)
+    log.debug("sql='%s'"%sql)
+    try:
+      cur.execute(sql)
+      conn.commit()
+      cur.execute('SELECT LASTVAL()')
+      id_of_new_row = cur.fetchone()[0]
+    except psycopg2.Error as e:
+      global_error_descr="I am unable update data to tbl_users_info: %s" % e.pgerror
+      log.error(global_error_descr)
+      log.info("try rollback insertion for this connection")
+      try:
+        conn.rollback()
+      except psycopg2.Error as e:
+        log.error("sql error: %s" % e.pgerror)
+        return False
+      return False
+
+  except Exception as e:
+    log.error(get_exception_traceback_descr(e))
+    global_error_descr="internal script error - see logs"
+    log.error(global_error_descr)
+    return False
+  return True
+
+
+def insert_signature(room_id,mxid,signature,signature_author,signature_descr):
   global config
   global client
   global log
@@ -71,7 +112,7 @@ def add_signature(room_id,mxid,signature,signature_author,signature_descr):
         "signature_time_create":psycopg2.TimestampFromTicks(time.time()),\
         "description_signature":signature_descr\
       }
-    sql="insert INTO tbl_users_info (%s) VALUES (%s)"%(columns,values)
+    sql="insert INTO tbl_users_info (%s) VALUES (%s) RETURNING user_id"%(columns,values)
     log.debug("sql='%s'"%sql)
     try:
       cur.execute(sql)
@@ -96,10 +137,16 @@ def add_signature(room_id,mxid,signature,signature_author,signature_descr):
     return False
   return True
 
+def add_signature(room_id,mxid,signature,signature_author,signature_descr):
+  global config
+  global log
+  if get_signature(room_id,mxid) is None:
+    return insert_signature(room_id,mxid,signature,signature_author,signature_descr)
+  else:
+    return update_signature(room_id,mxid,signature,signature_author,signature_descr)
 
 def get_signature(room_id,mxid):
   global config
-  global client
   global log
   item = None
   try:
