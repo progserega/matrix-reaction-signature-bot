@@ -286,13 +286,17 @@ def add_rule_interruption(room_id,mxid,rule_interruption_descr,mxid_author):
         log.error("sql.insert_signature()")
         return False
     # добавляем запись о нарушении правил:
-    sql="""begin
-      insert into tbl_rule_interruptions user_id=(select user_id from tbl_users_info where mxid='%(mxid)s' and room_id='%(room_id)s'), rule_interruption_author='%(mxid_author)s', description='%(rule_interruption_descr)s';
+    sql="""START TRANSACTION;
+      insert into tbl_rule_interruptions
+        (user_id, rule_interruption_author, description)
+        VALUES
+        ((select user_id from tbl_users_info where mxid='%(mxid)s' and room_id='%(room_id)s'), '%(mxid_author)s', '%(rule_interruption_descr)s');
+
         update tbl_users_info set
-          rule_interruption_active_count=(select count(*) from tbl_rule_interruptions where user_id=(select user_id from tbl_users_info where mxid='%(mxid)s' and room_id='%(room_id)s') and active_rule_interruption = True),
-          rule_interruption_count_all=(select count(*) from tbl_rule_interruptions where user_id=(select user_id from tbl_users_info where mxid='%(mxid)s' and room_id='%(room_id)s'))
+          rule_interruption_active_count = rule_interruption_count_all + 1,
+          rule_interruption_count_all = rule_interruption_count_all + 1
           where mxid='%(mxid)s' and room_id='%(room_id)s';
-    end
+    COMMIT;
     """%{\
       "room_id":room_id,\
       "mxid":mxid,\
@@ -313,4 +317,7 @@ def add_rule_interruption(room_id,mxid,rule_interruption_descr,mxid_author):
         log.error("sql error: %s" % e.pgerror)
         return False
       return False
-    return True
+  except Exception as e:
+    log.error(get_exception_traceback_descr(e))
+    return False
+  return True

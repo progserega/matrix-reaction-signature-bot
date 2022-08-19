@@ -36,7 +36,7 @@ create table tbl_rule_interruptions (
   description varchar(2048) NOT NULL,
   time_create timestamp DEFAULT now(),
   active_rule_interruption boolean  DEFAULT TRUE,
-  PRIMARY KEY (user_id)
+  PRIMARY KEY (rule_interruption_id)
 );
 
 comment on table tbl_rule_interruptions is 'Описание замечаний от админов';

@@ -120,6 +120,7 @@ async def process_command(room,event,commandline):
 2. add_signature - add signature to user
 3. enable_signature - enable/disable showing signature for user
 4. show_signature - show signature for user
+5. add_rule_interruption - increment rule interruption
     """
     if await matrix_api.send_text(room,help_text) == False:
       log.error("matrix_api.send_text()")
