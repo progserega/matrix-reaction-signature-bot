@@ -205,6 +205,75 @@ example:
         return False
       return True
 
+  elif command == "add_rule_interruption":
+    # проверяем права доступа:
+    if is_power_level_for_signature(room,event.sender) == False:
+      log.warning("no power level for this")
+      text="""you need more power level for this command"""
+      log.warning(text)
+      if await matrix_api.send_text(room,text) == False:
+        log.error("matrix_api.send_text()")
+        return False
+      return True
+
+    if len(parameters) < 2:
+      help_text="""command `add_rule_interruption` need 2 params.
+syntax:
+
+  my_botname_in_this_room: add_rule_interruption user_name_for_inc_rule_interruption "description - Why rule is interrupt"
+
+example:
+  rsbot: add_signature Baduser "rule paragraph 3 at message url: https://matrix.to/#/!tBHU3434554VVVfuMP:matrix.org/$UV232444VR8-F9ch3eAZxlG2nUdakJXDMfYETdZVYCQ?via=matrix.org"
+
+      """
+      if await matrix_api.send_text(room,help_text) == False:
+        log.error("matrix_api.send_text()")
+        return False
+      return True
+    else:
+      # параметров достаточно:
+      user_mxid = parameters[0]
+      rule_interruption_descr = parameters[1]
+
+      if user_mxid in room.users:
+        # пользователь указан по MXID:
+        user_mxid_mxid = user_mxid
+      elif user_mxid in room.names:
+        # пользователь указан по имени
+        if len(room.names[user_mxid])>1:
+          # несколько пользователей с одинаковыми именами:
+          text="""nickname %s not uniqum in this room. Please, select user by mxid (as @user:server.com)"""%user_mxid
+          log.warning(text)
+          if await matrix_api.send_text(room,text) == False:
+            log.error("matrix_api.send_text()")
+            return False
+          return True
+        else:
+          # пользователь указан по MXID:
+          user_mxid_mxid = room.names[user_mxid][0]
+      else:
+        # неизвестный пользователь:
+        text="""nickname %s not known. Please, correct, or select user by mxid (as @user:server.com)"""%user_mxid
+        log.warning(text)
+        if await matrix_api.send_text(room,text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return True
+      log.debug("user_mxid_mxid = %s"%user_mxid_mxid)
+      if sql.add_rule_interruption(room.room_id, user_mxid_mxid, rule_interruption_descr, event.sender) == False:
+        log.error("sql.add_rule_interruption()")
+        text="""internal error sql.add_rule_interruption()"""
+        if await matrix_api.send_text(room,text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return False
+      # уведомляем пользователя, что всё получилось:
+      text="""success add rule_interruption to user %s"""%user_mxid_mxid
+      if await matrix_api.send_text(room,text) == False:
+        log.error("matrix_api.send_text()")
+        return False
+      return True
+
   elif command == "add_signature":
     # проверяем права доступа:
     if is_power_level_for_signature(room,event.sender) == False:
@@ -331,7 +400,6 @@ example:
           log.error("matrix_api.send_text()")
           return False
         return False
-      log.debug(ret)
       if ret == 0:
         text = "no such user in db: %s"%signature_user_mxid
         log.debug(text)

@@ -266,3 +266,51 @@ def check_user_exist(room_id,mxid):
   except Exception as e:
     log.error(get_exception_traceback_descr(e))
     return None
+
+
+def add_rule_interruption(room_id,mxid,rule_interruption_descr,mxid_author):
+  global config
+  global log
+  global conn
+  global cur
+  try:
+    log.debug("start function")
+    # формируем sql-запрос:
+    ret = check_user_exist(room_id,mxid)
+    if ret is None:
+      log.error("sql.check_user_exist()")
+      return False
+    if ret == 0:
+      # нет такого пользователя - нужно завести (через функцию добавления пустой подписи):
+      if insert_signature(room_id,mxid,signature="",signature_author="",signature_descr="") == False:
+        log.error("sql.insert_signature()")
+        return False
+    # добавляем запись о нарушении правил:
+    sql="""begin
+      insert into tbl_rule_interruptions user_id=(select user_id from tbl_users_info where mxid='%(mxid)s' and room_id='%(room_id)s'), rule_interruption_author='%(mxid_author)s', description='%(rule_interruption_descr)s';
+        update tbl_users_info set
+          rule_interruption_active_count=(select count(*) from tbl_rule_interruptions where user_id=(select user_id from tbl_users_info where mxid='%(mxid)s' and room_id='%(room_id)s') and active_rule_interruption = True),
+          rule_interruption_count_all=(select count(*) from tbl_rule_interruptions where user_id=(select user_id from tbl_users_info where mxid='%(mxid)s' and room_id='%(room_id)s'))
+          where mxid='%(mxid)s' and room_id='%(room_id)s';
+    end
+    """%{\
+      "room_id":room_id,\
+      "mxid":mxid,\
+      "rule_interruption_descr":rule_interruption_descr,\
+      "mxid_author":mxid_author\
+    }
+    log.debug("sql='%s'"%sql)
+    try:
+      cur.execute(sql)
+      conn.commit()
+    except psycopg2.Error as e:
+      global_error_descr="I am unable insert/update data: %s" % e.pgerror
+      log.error(global_error_descr)
+      log.info("try rollback insertion for this connection")
+      try:
+        conn.rollback()
+      except psycopg2.Error as e:
+        log.error("sql error: %s" % e.pgerror)
+        return False
+      return False
+    return True
