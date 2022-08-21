@@ -46,3 +46,29 @@ comment on column tbl_rule_interruptions.rule_interruption_author is 'Кто в�
 comment on column tbl_rule_interruptions.description is 'Описание замечания';
 comment on column tbl_rule_interruptions.time_create is 'Время замечания';
 comment on column tbl_rule_interruptions.active_rule_interruption is 'Является ли это замечание текущим (активным)';
+
+create table tbl_global_settings (
+	global_setting_id serial,
+	name varchar(255) default null,
+	value varchar(255) default null,
+  PRIMARY KEY (name)
+);
+
+comment on table tbl_global_settings is 'Опции бота для отдельных комнат';
+comment on column tbl_global_settings.global_setting_id is 'Числовой идентификатор опции';
+comment on column tbl_global_settings.name is 'имя опции';
+comment on column tbl_global_settings.value is 'значение опции';
+
+create table tbl_room_settings (
+	room_setting_id serial,
+	room_id varchar(255) default null,
+	name varchar(255) default null,
+	value varchar(255) default null,
+  PRIMARY KEY (room_id,name)
+);
+
+comment on table tbl_room_settings is 'Опции бота для отдельных комнат';
+comment on column tbl_room_settings.room_setting_id is 'Числовой идентификатор опции';
+comment on column tbl_room_settings.room_id is 'ID комнаты';
+comment on column tbl_room_settings.name is 'Имя опции';
+comment on column tbl_room_settings.value is 'Значение опции';

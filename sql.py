@@ -214,6 +214,129 @@ def get_signature(room_id,mxid):
     log.error(get_exception_traceback_descr(e))
     return None
 
+def get_room_settings(room_id):
+  global config
+  global log
+  global conn
+  global cur
+  item = None
+  try:
+    log.debug("start function")
+    time_execute=time.time()
+    # формируем sql-запрос:
+    sql="select * from tbl_room_settings where room_id='%s'"%room_id
+    log.debug("sql='%s'"%sql)
+    try:
+      cur.execute(sql)
+      item = cur.fetchall()
+    except psycopg2.Error as e:
+      log.error("sql error: %s" % e.pgerror)
+      return None
+    if item==None:
+      log.debug("no settings for room %s"%room_id)
+      return None
+    log.debug("execute function time=%f"%(time.time()-time_execute))
+    return item
+  except Exception as e:
+    log.error(get_exception_traceback_descr(e))
+    return None
+
+def set_global_setting(name,value):
+  global config
+  global log
+  global conn
+  global cur
+  try:
+    log.debug("start function")
+    # формируем sql-запрос:
+    sql="""
+INSERT INTO tbl_global_settings (name,value) VALUES ('%(name)s','%(value)s')
+ON CONFLICT (name) DO UPDATE SET value = '%(value)s';
+    """%{\
+      "name":name,\
+      "value":value\
+    }
+    log.debug("sql='%s'"%sql)
+    try:
+      cur.execute(sql)
+      conn.commit()
+    except psycopg2.Error as e:
+      global_error_descr="I am unable insert/update data: %s" % e.pgerror
+      log.error(global_error_descr)
+      log.info("try rollback insertion for this connection")
+      try:
+        conn.rollback()
+      except psycopg2.Error as e:
+        log.error("sql error: %s" % e.pgerror)
+        return False
+      return False
+  except Exception as e:
+    log.error(get_exception_traceback_descr(e))
+    return False
+  return True
+
+def set_room_setting(room_id,name,value):
+  global config
+  global log
+  global conn
+  global cur
+  try:
+    log.debug("start function")
+    # формируем sql-запрос:
+    sql="""
+INSERT INTO tbl_room_settings (room_id,name,value) VALUES ('%(room_id)s','%(name)s','%(value)s')
+ON CONFLICT (room_id,name) DO UPDATE SET value = '%(value)s';
+    """%{\
+      "room_id":room_id,\
+      "name":name,\
+      "value":value\
+    }
+    log.debug("sql='%s'"%sql)
+    try:
+      cur.execute(sql)
+      conn.commit()
+    except psycopg2.Error as e:
+      global_error_descr="I am unable insert/update data: %s" % e.pgerror
+      log.error(global_error_descr)
+      log.info("try rollback insertion for this connection")
+      try:
+        conn.rollback()
+      except psycopg2.Error as e:
+        log.error("sql error: %s" % e.pgerror)
+        return False
+      return False
+  except Exception as e:
+    log.error(get_exception_traceback_descr(e))
+    return False
+  return True
+
+def get_global_settings():
+  global config
+  global log
+  global conn
+  global cur
+  item = None
+  try:
+    log.debug("start function")
+    time_execute=time.time()
+    # формируем sql-запрос:
+    sql="select * from tbl_global_settings"
+    log.debug("sql='%s'"%sql)
+    try:
+      cur.execute(sql)
+      item = cur.fetchall()
+    except psycopg2.Error as e:
+      log.error("sql error: %s" % e.pgerror)
+      return None
+    if item==None:
+      log.debug("no global settings")
+      return None
+    log.debug("execute function time=%f"%(time.time()-time_execute))
+    return item
+  except Exception as e:
+    log.error(get_exception_traceback_descr(e))
+    return None
+
 def get_signature_descr(room_id,mxid):
   global config
   global log
