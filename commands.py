@@ -39,6 +39,17 @@ def init(log_param,config_param):
   global config
   log = log_param
   config = config_param
+
+  # локализация:
+  # TODO
+  #gettext.bindtextdomain('myapplication', '/path/to/my/language/directory')
+  #gettext.textdomain('myapplication')
+  #_ = gettext.gettext
+  # FIXME
+  gettext.install('commands', './locale')
+  #lang = gettext.translation('commands', languages=['ru'])
+  #lang = gettext.translation('./locale', languages=['ru'])
+  #lang.install()
   log.info("success init commands module")
   return True
 
@@ -156,21 +167,21 @@ async def process_command(room,event,commandline):
     command = param_list[0]
     parameters = param_list[1:]
   #=========== help command =========
-  if command == "help":
-    help_text="""I am admin reaction bot.
+  if command == "help" or command == _("help"):
+    help_text=_("""I am admin reaction bot.
 1. help - this help
 2. add_signature - add signature to user
 3. enable_signature - enable/disable showing signature for user
 4. show_signature - show signature for user
 5. add_rule_interruption - increment rule interruption
 6. set_locale - change language of bot for this room
-    """
+    """)
     if await matrix_api.send_text(room,help_text) == False:
       log.error("matrix_api.send_text()")
       return False
     return True
 
-  elif command == "set_locale":
+  elif command == "set_locale" or command == _("set_locale"):
     # проверяем права доступа:
     if is_power_level_for_signature(room,event.sender) == False:
       log.warning("no power level for this")
@@ -214,7 +225,7 @@ example:
         return False
       return True
 
-  elif command == "enable_signature":
+  elif command == "enable_signature" or command == _("enable_signature"):
     # проверяем права доступа:
     if is_power_level_for_signature(room,event.sender) == False:
       log.warning("no power level for this")
@@ -293,7 +304,7 @@ example:
         return False
       return True
 
-  elif command == "add_rule_interruption":
+  elif command == "add_rule_interruption" or command == _("add_rule_interruption"):
     # проверяем права доступа:
     if is_power_level_for_signature(room,event.sender) == False:
       log.warning("no power level for this")
@@ -362,7 +373,7 @@ example:
         return False
       return True
 
-  elif command == "add_signature":
+  elif command == "add_signature" or command == _("add_signature"):
     # проверяем права доступа:
     if is_power_level_for_signature(room,event.sender) == False:
       log.warning("no power level for this")
@@ -432,7 +443,7 @@ example:
         return False
       return True
 
-  elif command == "show_signature":
+  elif command == "show_signature" or command == _("show_signature"):
 
     if len(parameters) < 1:
       help_text="""This command show signature record for user.
@@ -506,13 +517,13 @@ example:
           return False
         return False
       # формируем отчёт:
-      text = """User %(signature_user_mxid)s:
+      text = _("""User %(signature_user_mxid)s:
 1. signature: %(signature)s
 2. Author of signature: %(signature_author)s
 3. Time create/update of signature: %(signature_time_create)s
 4. Show signature: %(signature_show)s
 5. Description signature: %(signature_descr)s
-"""%{\
+""")%{\
       "signature_user_mxid":signature_user_mxid,\
       "signature":ret[0],\
       "signature_author":ret[1],\
@@ -528,9 +539,9 @@ example:
 
   else:
     # unknown command:
-    help_text="""unknown command!
+    help_text=_("""unknown command!
 Please, use 'help' or empty command (only my room nick name) for help.
-    """
+    """)
     if await matrix_api.send_text(room,help_text) == False:
       log.error("matrix_api.send_text()")
       return False
