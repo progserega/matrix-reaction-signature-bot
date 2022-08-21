@@ -224,7 +224,7 @@ def get_room_settings(room_id):
     log.debug("start function")
     time_execute=time.time()
     # формируем sql-запрос:
-    sql="select * from tbl_room_settings where room_id='%s'"%room_id
+    sql="select name,value from tbl_room_settings where room_id='%s'"%room_id
     log.debug("sql='%s'"%sql)
     try:
       cur.execute(sql)
@@ -320,7 +320,7 @@ def get_global_settings():
     log.debug("start function")
     time_execute=time.time()
     # формируем sql-запрос:
-    sql="select * from tbl_global_settings"
+    sql="select name,value from tbl_global_settings"
     log.debug("sql='%s'"%sql)
     try:
       cur.execute(sql)

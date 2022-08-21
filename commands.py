@@ -16,10 +16,12 @@ import time
 import re
 import matrix_api
 import sql
+import gettext
 
 config = None
 client = None
 log = None
+db_bot_settings = {}
 
 
 def get_exception_traceback_descr(e):
@@ -39,6 +41,34 @@ def init(log_param,config_param):
   config = config_param
   log.info("success init commands module")
   return True
+
+def update_db_bot_settings_cache(room_id=None):
+  global log
+  global db_bot_settings
+  try:
+    global_settings = sql.get_global_settings()
+    db_bot_settings["global_settings"]={}
+    if global_settings is None:
+      log.warning("sql.get_global_settings() return None")
+    else:
+      for line in global_settings:
+        db_bot_settings["global_settings"][line[0]]=line[1]
+        
+    if "room_settings" not in db_bot_settings:
+      db_bot_settings["room_settings"]={}
+    if room_id is not None:
+      room_settings=sql.get_room_settings(room_id)
+      db_bot_settings["room_settings"][room_id]={}
+      if room_settings is None:
+        log.warning("sql.get_room_settings() return None")
+      else:
+        for line in room_settings:
+          db_bot_settings["room_settings"][room_id][line[0]]=line[1]
+    log.debug(db_bot_settings)
+    return True
+  except Exception as e:
+    log.error(get_exception_traceback_descr(e))
+    return False
 
 def parse_command_line(commandline):
   try:
@@ -100,9 +130,21 @@ async def process_command(room,event,commandline):
   global config
   global client
   global log
-  log.debug("start function")
+  global global_settings
+  global room_settings
 
+  log.debug("start function")
   log.debug("command in room %s (id: %s): %s"%(room.display_name, room.room_id, commandline))
+
+  # update options:
+  if "room_settings" in db_bot_settings and room.room_id in db_bot_settings["room_settings"]:
+    # опции уже загружены:
+    pass
+  else:
+    # нужно обновить кэш опций:
+    if update_db_bot_settings_cache(room.room_id) == False:
+      log.error("update_db_bot_settings_cache()")
+      return False
 
   param_list = parse_command_line(commandline)
 
@@ -121,11 +163,56 @@ async def process_command(room,event,commandline):
 3. enable_signature - enable/disable showing signature for user
 4. show_signature - show signature for user
 5. add_rule_interruption - increment rule interruption
+6. set_locale - change language of bot for this room
     """
     if await matrix_api.send_text(room,help_text) == False:
       log.error("matrix_api.send_text()")
       return False
     return True
+
+  elif command == "set_locale":
+    # проверяем права доступа:
+    if is_power_level_for_signature(room,event.sender) == False:
+      log.warning("no power level for this")
+      text="""you need more power level for this command"""
+      log.warning(text)
+      if await matrix_api.send_text(room,text) == False:
+        log.error("matrix_api.send_text()")
+        return False
+      return True
+
+    if len(parameters) < 1:
+      help_text="""This command allow switch language for this room.
+
+command `set_locale` need 1 param: locale. Locale can be 'ru', 'us', etc.
+syntax:
+
+  my_botname_in_this_room: set_locale locale
+
+example:
+  rsbot: set_locale ru
+      """
+      if await matrix_api.send_text(room,help_text) == False:
+        log.error("matrix_api.send_text()")
+        return False
+      return True
+    else:
+      # параметров достаточно:
+      locale_name = parameters[0]
+
+      if sql.set_room_setting(room.room_id, 'locale', locale_name) == False:
+        log.error("sql.set_room_setting()")
+        text="""internal error sql.set_room_setting()"""
+        if await matrix_api.send_text(room,text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return False
+
+      # нужно обновить кэш опций:
+      if update_db_bot_settings_cache(room.room_id) == False:
+        log.error("update_db_bot_settings_cache()")
+        return False
+      return True
 
   elif command == "enable_signature":
     # проверяем права доступа:
