@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-08-22 01:08+1000\n"
-"PO-Revision-Date: 2022-08-22 01:11+1000\n"
+"POT-Creation-Date: 2022-08-22 01:19+1000\n"
+"PO-Revision-Date: 2022-08-22 01:22+1000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ru_RU\n"
@@ -61,6 +61,14 @@ msgstr "подпись"
 #: commands.py:446
 msgid "show_signature"
 msgstr "показать_подпись"
+
+#: commands.py:497
+msgid "internal error sql.check_user_exist()"
+msgstr ""
+
+#: commands.py:514
+msgid "internal error sql.get_signature_descr()"
+msgstr "внутренняя ошибка sql.get_signature_descr()"
 
 #: commands.py:520
 msgid ""

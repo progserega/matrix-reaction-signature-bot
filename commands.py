@@ -494,7 +494,7 @@ example:
       ret = sql.check_user_exist(room.room_id, signature_user_mxid)
       if ret is None:
         log.error("sql.check_user_exist()")
-        text="""internal error sql.check_user_exist()"""
+        text=_("""internal error sql.check_user_exist()""")
         if await matrix_api.send_text(room,text) == False:
           log.error("matrix_api.send_text()")
           return False
@@ -511,7 +511,7 @@ example:
       ret = sql.get_signature_descr(room.room_id, signature_user_mxid)
       if ret is None:
         log.error("sql.get_signature_descr()")
-        text="""internal error sql.get_signature_descr()"""
+        text=_("""internal error sql.get_signature_descr()""")
         if await matrix_api.send_text(room,text) == False:
           log.error("matrix_api.send_text()")
           return False
