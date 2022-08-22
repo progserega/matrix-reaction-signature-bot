@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-08-22 01:19+1000\n"
-"PO-Revision-Date: 2022-08-22 01:22+1000\n"
+"POT-Creation-Date: 2022-08-22 15:06+1000\n"
+"PO-Revision-Date: 2022-08-22 15:13+1000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ru_RU\n"
@@ -18,11 +18,11 @@ msgstr ""
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 "X-Generator: Poedit 2.3\n"
 
-#: commands.py:170
+#: commands.py:175
 msgid "help"
 msgstr "помощь"
 
-#: commands.py:171
+#: commands.py:176
 msgid ""
 "I am admin reaction bot.\n"
 "1. help - this help\n"
@@ -42,35 +42,35 @@ msgstr ""
 "6. язык - поменять язык общения с ботом для этой комнаты\n"
 "    "
 
-#: commands.py:184
+#: commands.py:189
 msgid "set_locale"
 msgstr "язык"
 
-#: commands.py:228
+#: commands.py:244
 msgid "enable_signature"
 msgstr "вкл_подпись"
 
-#: commands.py:307
+#: commands.py:323
 msgid "add_rule_interruption"
 msgstr "замечание"
 
-#: commands.py:376
+#: commands.py:392
 msgid "add_signature"
 msgstr "подпись"
 
-#: commands.py:446
+#: commands.py:462
 msgid "show_signature"
 msgstr "показать_подпись"
 
-#: commands.py:497
+#: commands.py:513
 msgid "internal error sql.check_user_exist()"
-msgstr ""
+msgstr "внутренняя ошибка sql.check_user_exist()"
 
-#: commands.py:514
+#: commands.py:530
 msgid "internal error sql.get_signature_descr()"
 msgstr "внутренняя ошибка sql.get_signature_descr()"
 
-#: commands.py:520
+#: commands.py:536
 msgid ""
 "User %(signature_user_mxid)s:\n"
 "1. signature: %(signature)s\n"
@@ -86,9 +86,13 @@ msgstr ""
 "4. Показывать подпись: %(signature_show)s\n"
 "5. Описание подписи: %(signature_descr)s\n"
 
-#: commands.py:542
+#: commands.py:558
 msgid ""
 "unknown command!\n"
 "Please, use 'help' or empty command (only my room nick name) for help.\n"
 "    "
 msgstr ""
+"неизвестная команда!\n"
+"Пожалуйста, используйте команду 'помощь' или обатитесь ко мне без "
+"команды (только мой ник) для получения справки.\n"
+"    "

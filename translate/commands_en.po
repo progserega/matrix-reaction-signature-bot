@@ -1,0 +1,78 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2022-08-22 01:23+1000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: commands.py:170
+msgid "help"
+msgstr ""
+
+#: commands.py:171
+msgid ""
+"I am admin reaction bot.\n"
+"1. help - this help\n"
+"2. add_signature - add signature to user\n"
+"3. enable_signature - enable/disable showing signature for user\n"
+"4. show_signature - show signature for user\n"
+"5. add_rule_interruption - increment rule interruption\n"
+"6. set_locale - change language of bot for this room\n"
+"    "
+msgstr ""
+
+#: commands.py:184
+msgid "set_locale"
+msgstr ""
+
+#: commands.py:228
+msgid "enable_signature"
+msgstr ""
+
+#: commands.py:307
+msgid "add_rule_interruption"
+msgstr ""
+
+#: commands.py:376
+msgid "add_signature"
+msgstr ""
+
+#: commands.py:446
+msgid "show_signature"
+msgstr ""
+
+#: commands.py:497
+msgid "internal error sql.check_user_exist()"
+msgstr ""
+
+#: commands.py:514
+msgid "internal error sql.get_signature_descr()"
+msgstr ""
+
+#: commands.py:520
+msgid ""
+"User %(signature_user_mxid)s:\n"
+"1. signature: %(signature)s\n"
+"2. Author of signature: %(signature_author)s\n"
+"3. Time create/update of signature: %(signature_time_create)s\n"
+"4. Show signature: %(signature_show)s\n"
+"5. Description signature: %(signature_descr)s\n"
+msgstr ""
+
+#: commands.py:542
+msgid ""
+"unknown command!\n"
+"Please, use 'help' or empty command (only my room nick name) for help.\n"
+"    "
+msgstr ""
+

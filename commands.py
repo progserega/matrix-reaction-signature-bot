@@ -40,16 +40,14 @@ def init(log_param,config_param):
   log = log_param
   config = config_param
 
-  # локализация:
-  # TODO
-  #gettext.bindtextdomain('myapplication', '/path/to/my/language/directory')
-  #gettext.textdomain('myapplication')
-  #_ = gettext.gettext
-  # FIXME
-  gettext.install('commands', './locale')
-  #lang = gettext.translation('commands', languages=['ru'])
-  #lang = gettext.translation('./locale', languages=['ru'])
-  #lang.install()
+  # локализация. Стандартный вариант, без переключения локали на-лету. Опция языка берётся из переменных 
+  # окружения LC_*:
+  # переводимые строки заключать в символы _("english text id")
+  # https://habr.com/ru/post/73554/
+  # https://docs.python.org/3/library/gettext.html
+  #
+  #gettext.install('commands', './locale')
+
   log.info("success init commands module")
   return True
 
@@ -75,6 +73,9 @@ def update_db_bot_settings_cache(room_id=None):
       else:
         for line in room_settings:
           db_bot_settings["room_settings"][room_id][line[0]]=line[1]
+      # устанавливаем значение локали по умолчанию в английскую:
+      if "locale" not in db_bot_settings["room_settings"][room_id]:
+        db_bot_settings["room_settings"][room_id]["locale"]="en"
     log.debug(db_bot_settings)
     return True
   except Exception as e:
@@ -156,6 +157,10 @@ async def process_command(room,event,commandline):
     if update_db_bot_settings_cache(room.room_id) == False:
       log.error("update_db_bot_settings_cache()")
       return False
+    # включаем локаль:
+    lang_setting = db_bot_settings["room_settings"][room.room_id]["locale"]
+    lang = gettext.translation('commands', localedir='./locale', languages=[lang_setting])
+    lang.install()
 
   param_list = parse_command_line(commandline)
 
@@ -210,6 +215,17 @@ example:
     else:
       # параметров достаточно:
       locale_name = parameters[0]
+      try:
+        # включаем локаль:
+        lang = gettext.translation('commands', localedir='./locale', languages=[locale_name])
+        lang.install()
+      except:
+        # ошибка включения локали:
+        text="""unsupported locale name '%s'. Try 'en' or 'ru' for example."""%locale_name
+        if await matrix_api.send_text(room,text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return False
 
       if sql.set_room_setting(room.room_id, 'locale', locale_name) == False:
         log.error("sql.set_room_setting()")
