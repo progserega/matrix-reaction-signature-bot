@@ -5,7 +5,9 @@ all: install_translate
 install_translate: translate
 	mkdir -p locale/ru/LC_MESSAGES/
 	mkdir -p locale/en/LC_MESSAGES/
-	ln -s en locale/us
+	ln -sf en locale/us
+	rm -f locale/ru/LC_MESSAGES/*
+	rm -f locale/en/LC_MESSAGES/*
 	cp translate/*_ru.mo locale/ru/LC_MESSAGES/; rename -e 's/_ru.mo/.mo/' locale/ru/LC_MESSAGES/*
 	cp translate/*_en.mo locale/en/LC_MESSAGES/; rename -e 's/_en.mo/.mo/' locale/en/LC_MESSAGES/*
 

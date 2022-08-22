@@ -462,7 +462,7 @@ example:
   elif command == "show_signature" or command == _("show_signature"):
 
     if len(parameters) < 1:
-      help_text="""This command show signature record for user.
+      help_text=_("""This command show signature record for user.
 
 command `show_signature` need 1 params.
 syntax:
@@ -472,7 +472,7 @@ syntax:
 example:
   rsbot: show_signature Baduser
 
-      """
+      """)
       if await matrix_api.send_text(room,help_text) == False:
         log.error("matrix_api.send_text()")
         return False
