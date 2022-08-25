@@ -16,6 +16,16 @@ config = None
 client = None
 log = None
 
+def get_exception_traceback_descr(e):
+  if hasattr(e, '__traceback__'):
+    tb_str = traceback.format_exception(etype=type(e), value=e, tb=e.__traceback__)
+    result=""
+    for msg in tb_str:
+      result+=msg
+    return result
+  else:
+    return e
+
 def init(log_param,config_param, client_param):
   global log
   global config

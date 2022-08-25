@@ -23,6 +23,16 @@ client = None
 log = None
 session = {}
 
+def get_exception_traceback_descr(e):
+  if hasattr(e, '__traceback__'):
+    tb_str = traceback.format_exception(etype=type(e), value=e, tb=e.__traceback__)
+    result=""
+    for msg in tb_str:
+      result+=msg
+    return result
+  else:
+    return e
+
 async def send_emotion(room_id,event_id,emotion_text):
   global config
   global client
@@ -101,15 +111,33 @@ def check_allow_invite(user):
           break
     log.info("result check allow invite = %s"%allow)
     return allow
-
   except Exception as e:
     log.error(get_exception_traceback_descr(e))
     return False
 
-async def invite_cb(room: MatrixRoom, event: nio.InviteEvent):
+
+async def sync():
   global config
   global client
   global log
+  global session
+  try:
+    if "token" in session:
+      token = session["token"]
+      resp = await client.sync(full_state=True, since=session['token'])
+    else:
+      resp = await client.sync(timeout=500,full_state=True)
+    session["token"] = resp.next_batch
+    return resp
+  except Exception as e:
+    log.error(get_exception_traceback_descr(e))
+    return None
+
+async def invite_cb(room: nio.MatrixRoom, event: nio.InviteEvent):
+  global config
+  global client
+  global log
+  global session
 
   try:
     log.debug("start function")
@@ -118,17 +146,20 @@ async def invite_cb(room: MatrixRoom, event: nio.InviteEvent):
       log.warning("%s not allowed to invite bot"%event.sender)
       return True
 
-    resp = await client.join(room.room_id) == False:
+    resp = await client.join(room.room_id)
     if isinstance(resp, nio.JoinError):
       log.error("client.join()")
       return False
 
-    cur_room = client.rooms[room.room_id]
-    log.info("join to room %s by invite from %s"%(cur_room.name, event.sender))
+    # обновляем список комнат в которых мы есть:
+    resp = await sync()
+    if resp is None:
+      log.error("sync()")
+      log.info("join to room %s by invite from %s"%(room.room_id, event.sender))
+    else:
+      cur_room = client.rooms[room.room_id]
+      log.info("join to room %s by invite from %s"%(cur_room.name, event.sender))
 
-    if await matrix_api.set_read_marker(room,event) == False:
-      log.error("matrix_api.set_read_marker()")
-      return False
     return True
   except Exception as e:
     log.error(get_exception_traceback_descr(e))
@@ -238,14 +269,12 @@ async def main():
     log.info("matrix_api.init()")
     
     while True:
-      if "token" in session:
-        token = session["token"]
-        resp = await client.sync(full_state=True, since=session['token'])
+      resp = await sync()
+      if resp is not None:
+        # save token
+        write_details_to_disk(session)
       else:
-        resp = await client.sync(timeout=1000,full_state=True)
-      session["token"] = resp.next_batch
-      # save token
-      write_details_to_disk(session)
+        log.error("sync")
       log.debug("iteration")
       time.sleep(3)
     #f=open("out.json","w+")
