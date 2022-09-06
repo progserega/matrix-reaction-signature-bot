@@ -416,7 +416,7 @@ def add_rule_interruption(room_id,mxid,rule_interruption_descr,mxid_author):
         ((select user_id from tbl_users_info where mxid='%(mxid)s' and room_id='%(room_id)s'), '%(mxid_author)s', '%(rule_interruption_descr)s');
 
         update tbl_users_info set
-          rule_interruption_active_count = rule_interruption_count_all + 1,
+          rule_interruption_active_count = rule_interruption_active_count + 1,
           rule_interruption_count_all = rule_interruption_count_all + 1
           where mxid='%(mxid)s' and room_id='%(room_id)s';
     COMMIT;
