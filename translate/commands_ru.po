@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-09-06 20:56+1000\n"
-"PO-Revision-Date: 2022-09-06 21:26+1000\n"
+"POT-Creation-Date: 2022-09-06 21:51+1000\n"
+"PO-Revision-Date: 2022-09-06 21:51+1000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ru_RU\n"
@@ -77,6 +77,11 @@ msgstr ""
 #: commands.py:197
 msgid "set_locale"
 msgstr "язык"
+
+#: commands.py:201 commands.py:256 commands.py:335 commands.py:404
+#: commands.py:851 commands.py:923 commands.py:1034
+msgid "you need more power level for this command"
+msgstr "вам не хватает прав для выполнения этой команды"
 
 #: commands.py:209
 msgid ""
@@ -442,10 +447,6 @@ msgstr "успешно очистил счётчик активных наруш
 #: commands.py:919
 msgid "set_my_descr"
 msgstr "установить_моё_описание"
-
-#: commands.py:923 commands.py:1034
-msgid "you need more power level for this command"
-msgstr "вам не хватает прав для выполнения этой команды"
 
 #: commands.py:931
 msgid ""

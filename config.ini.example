@@ -35,8 +35,12 @@ session_store_path = session.json
 
 # power level for change user signature and enable/disable it:
 power_level_for_signature = ban
-# power level for change user description (each user can change its own description):
-power_level_for_user_descr = users_default
+# power level for change locale:
+power_level_for_set_locale = ban
+# power level for change user description (by default each user can change its own description):
+power_level_for_user_own_descr = users_default
+# power level for clear any user descr:
+power_level_for_clear_user_descr = ban
 # power level for admin rule_interruption:
 power_level_for_rule_interruption = ban
 

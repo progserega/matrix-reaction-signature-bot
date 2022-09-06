@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-09-06 21:26+1000\n"
-"PO-Revision-Date: 2022-09-06 21:26+1000\n"
+"POT-Creation-Date: 2022-09-06 21:51+1000\n"
+"PO-Revision-Date: 2022-09-06 21:51+1000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -48,6 +48,11 @@ msgstr ""
 
 #: commands.py:197
 msgid "set_locale"
+msgstr ""
+
+#: commands.py:201 commands.py:256 commands.py:335 commands.py:404
+#: commands.py:851 commands.py:923 commands.py:1034
+msgid "you need more power level for this command"
 msgstr ""
 
 #: commands.py:209
@@ -292,10 +297,6 @@ msgstr ""
 
 #: commands.py:919
 msgid "set_my_descr"
-msgstr ""
-
-#: commands.py:923 commands.py:1034
-msgid "you need more power level for this command"
 msgstr ""
 
 #: commands.py:931

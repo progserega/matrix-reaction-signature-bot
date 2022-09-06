@@ -198,7 +198,7 @@ async def process_command(room,event,commandline):
       # проверяем права доступа:
       if is_power_level_for(room,event.sender,"power_level_for_set_locale") == False:
         log.warning("no power level for this")
-        text="""you need more power level for this command"""
+        text=_("you need more power level for this command")
         log.warning(text)
         if await matrix_api.send_text(room,text) == False:
           log.error("matrix_api.send_text()")
@@ -253,7 +253,7 @@ async def process_command(room,event,commandline):
       # проверяем права доступа:
       if is_power_level_for(room,event.sender,"power_level_for_signature") == False:
         log.warning("no power level for this")
-        text="""you need more power level for this command"""
+        text=_("you need more power level for this command")
         log.warning(text)
         if await matrix_api.send_text(room,text) == False:
           log.error("matrix_api.send_text()")
@@ -332,7 +332,7 @@ async def process_command(room,event,commandline):
       # проверяем права доступа:
       if is_power_level_for(room,event.sender,"power_level_for_rule_interruption") == False:
         log.warning("no power level for this")
-        text="""you need more power level for this command"""
+        text=_("you need more power level for this command")
         log.warning(text)
         if await matrix_api.send_text(room,text) == False:
           log.error("matrix_api.send_text()")
@@ -401,7 +401,7 @@ async def process_command(room,event,commandline):
       # проверяем права доступа:
       if is_power_level_for(room,event.sender,"power_level_for_signature") == False:
         log.warning("no power level for this")
-        text="""you need more power level for this command"""
+        text=_("you need more power level for this command")
         log.warning(text)
         if await matrix_api.send_text(room,text) == False:
           log.error("matrix_api.send_text()")
@@ -848,7 +848,7 @@ async def process_command(room,event,commandline):
       # проверяем права доступа:
       if is_power_level_for(room,event.sender,"power_level_for_rule_interruption") == False:
         log.warning("no power level for this")
-        text="""you need more power level for this command"""
+        text=_("you need more power level for this command")
         log.warning(text)
         if await matrix_api.send_text(room,text) == False:
           log.error("matrix_api.send_text()")
