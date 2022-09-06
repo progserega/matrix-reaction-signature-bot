@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-09-06 19:31+1000\n"
-"PO-Revision-Date: 2022-09-06 19:32+1000\n"
+"POT-Creation-Date: 2022-09-06 21:26+1000\n"
+"PO-Revision-Date: 2022-09-06 21:26+1000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -50,16 +50,79 @@ msgstr ""
 msgid "set_locale"
 msgstr ""
 
+#: commands.py:209
+msgid ""
+"This command allow switch language for this room.\n"
+"\n"
+"  command `set_locale` need 1 param: locale. Locale can be 'ru', 'us', etc.\n"
+"  syntax:\n"
+"\n"
+"    my_botname_in_this_room: set_locale locale\n"
+"\n"
+"  example:\n"
+"    rsbot: set_locale ru\n"
+"        "
+msgstr ""
+
 #: commands.py:252
 msgid "enable_signature"
+msgstr ""
+
+#: commands.py:264
+msgid ""
+"This command disable or enable showing signature for user.\n"
+"  Disabling - is not delete signature in db, but it will not be show.\n"
+"\n"
+"  command `enable_signature` need 2 params.\n"
+"  syntax:\n"
+"\n"
+"    my_botname_in_this_room: enable_signature user_name_for_signature yes/"
+"no\n"
+"\n"
+"  example:\n"
+"    rsbot: enable_signature Baduser yes\n"
+"\n"
+msgstr ""
+
+#: commands.py:311
+msgid "yes"
 msgstr ""
 
 #: commands.py:331
 msgid "add_rule_interruption"
 msgstr ""
 
+#: commands.py:343
+msgid ""
+"command `add_rule_interruption` need 2 params.\n"
+"  syntax:\n"
+"\n"
+"    my_botname_in_this_room: add_rule_interruption "
+"user_name_for_inc_rule_interruption \"description - Why rule is interrupt\"\n"
+"\n"
+"  example:\n"
+"    rsbot: add_signature Baduser \"rule paragraph 3 at message url: https://"
+"matrix.to/#/!tBHU3434554VVVfuMP:matrix.org/$UV232444VR8-"
+"F9ch3eAZxlG2nUdakJXDMfYETdZVYCQ?via=matrix.org\"\n"
+"\n"
+msgstr ""
+
 #: commands.py:400
 msgid "add_signature"
+msgstr ""
+
+#: commands.py:412
+msgid ""
+"command `add_signature` need 3 params.\n"
+"  syntax:\n"
+"\n"
+"    my_botname_in_this_room: add_signature user_name_for_signature "
+"signature_text \"description - Why signature added to user\"\n"
+"\n"
+"  example:\n"
+"    rsbot: add_signature Baduser \"spammer\" \"This user spam in this room!"
+"\"\n"
+"\n"
 msgstr ""
 
 #: commands.py:470
@@ -124,8 +187,8 @@ msgid "no such user in db: %s"
 msgstr ""
 
 #: commands.py:635 commands.py:708 commands.py:726 commands.py:803
-#: commands.py:821 commands.py:907 commands.py:942 commands.py:1004
-#: commands.py:1078
+#: commands.py:821 commands.py:907 commands.py:952 commands.py:1014
+#: commands.py:1088
 msgid "internal error in function: "
 msgstr ""
 
@@ -156,15 +219,15 @@ msgid ""
 "        "
 msgstr ""
 
-#: commands.py:686 commands.py:781 commands.py:886 commands.py:982
-#: commands.py:1057
+#: commands.py:686 commands.py:781 commands.py:886 commands.py:992
+#: commands.py:1067
 msgid ""
 "nickname %s not uniqum in this room. Please, select user by mxid (as @user:"
 "server.com)"
 msgstr ""
 
-#: commands.py:697 commands.py:792 commands.py:897 commands.py:993
-#: commands.py:1068
+#: commands.py:697 commands.py:792 commands.py:897 commands.py:1003
+#: commands.py:1078
 msgid ""
 "nickname %s not known. Please, correct, or select user by mxid (as @user:"
 "server.com)"
@@ -208,6 +271,21 @@ msgstr ""
 msgid "clear_active_rule_interruption"
 msgstr ""
 
+#: commands.py:859
+msgid ""
+"This command clear active rule interruptions for user.\n"
+"  They will become as not active.\n"
+"\n"
+"  command `clear_active_rule_interruption` need 1 param.\n"
+"  syntax:\n"
+"\n"
+"    my_botname_in_this_room: clear_active_rule_interruption user_name\n"
+"\n"
+"  example:\n"
+"    rsbot: clear_active_rule_interruption Baduser\n"
+"\n"
+msgstr ""
+
 #: commands.py:913
 msgid "success clear active rule interruptions for user %s"
 msgstr ""
@@ -216,33 +294,62 @@ msgstr ""
 msgid "set_my_descr"
 msgstr ""
 
-#: commands.py:948
+#: commands.py:923 commands.py:1034
+msgid "you need more power level for this command"
+msgstr ""
+
+#: commands.py:931
+msgid ""
+"command `set_my_descr` need 1 params.\n"
+"Command set own description for user. This can do only some user for self.\n"
+"  syntax:\n"
+"\n"
+"    my_botname_in_this_room: set_my_descr \"description of me\"\n"
+"\n"
+"  example:\n"
+"    rsbot: set_my_descr \"I am good user. My github url: xxxx, My social "
+"url: xxxx\"\n"
+"\n"
+msgstr ""
+
+#: commands.py:958
 msgid "success add user_descr to user %s"
 msgstr ""
 
-#: commands.py:954
+#: commands.py:964
 msgid "show_user_descr"
 msgstr ""
 
-#: commands.py:1011
+#: commands.py:966
+msgid ""
+"command `show_user_descr` need 1 params.\n"
+"Command show own description for user. This description was seted user for "
+"self.\n"
+"  syntax:\n"
+"\n"
+"    my_botname_in_this_room: show_user_descr username\n"
+"\n"
+"  examples:\n"
+"    rsbot: show_user_descr UserNick\n"
+"    rsbot: show_user_descr @user:server\n"
+"\n"
+msgstr ""
+
+#: commands.py:1021
 msgid "User '%s' has no own description"
 msgstr ""
 
-#: commands.py:1013
+#: commands.py:1023
 msgid ""
 "User description for user '%s' is:\n"
 "%s"
 msgstr ""
 
-#: commands.py:1020
+#: commands.py:1030
 msgid "clear_user_descr"
 msgstr ""
 
-#: commands.py:1024
-msgid "you need more power level for this command"
-msgstr ""
-
-#: commands.py:1032
+#: commands.py:1042
 msgid ""
 "This command clear user description. This can do only administrator or "
 "moderator.\n"
@@ -257,11 +364,11 @@ msgid ""
 "        "
 msgstr ""
 
-#: commands.py:1084
+#: commands.py:1094
 msgid "success clear user_descr to user %s"
 msgstr ""
 
-#: commands.py:1092
+#: commands.py:1102
 msgid ""
 "unknown command!\n"
 "  Please, use 'help' or empty command (only my room nick name) for help.\n"

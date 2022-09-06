@@ -206,7 +206,7 @@ async def process_command(room,event,commandline):
         return True
 
       if len(parameters) < 1:
-        help_text="""This command allow switch language for this room.
+        help_text=_("""This command allow switch language for this room.
 
   command `set_locale` need 1 param: locale. Locale can be 'ru', 'us', etc.
   syntax:
@@ -215,7 +215,7 @@ async def process_command(room,event,commandline):
 
   example:
     rsbot: set_locale ru
-        """
+        """)
         if await matrix_api.send_text(room,help_text) == False:
           log.error("matrix_api.send_text()")
           return False
@@ -261,7 +261,7 @@ async def process_command(room,event,commandline):
         return True
 
       if len(parameters) < 2:
-        help_text="""This command disable or enable showing signature for user.
+        help_text=_("""This command disable or enable showing signature for user.
   Disabling - is not delete signature in db, but it will not be show.
 
   command `enable_signature` need 2 params.
@@ -272,7 +272,7 @@ async def process_command(room,event,commandline):
   example:
     rsbot: enable_signature Baduser yes
 
-        """
+""")
         if await matrix_api.send_text(room,help_text) == False:
           log.error("matrix_api.send_text()")
           return False
@@ -308,7 +308,7 @@ async def process_command(room,event,commandline):
           return True
         log.debug("signature_user_mxid = %s"%signature_user_mxid)
         enable_flag = False
-        if enable_flag_str.lower() == "yes":
+        if enable_flag_str.lower() == _("yes"):
           enable_flag = True
 
         if sql.enable_signature(room.room_id, signature_user_mxid, enable_flag) == False:
@@ -340,7 +340,7 @@ async def process_command(room,event,commandline):
         return True
 
       if len(parameters) < 2:
-        help_text="""command `add_rule_interruption` need 2 params.
+        help_text=_("""command `add_rule_interruption` need 2 params.
   syntax:
 
     my_botname_in_this_room: add_rule_interruption user_name_for_inc_rule_interruption "description - Why rule is interrupt"
@@ -348,7 +348,7 @@ async def process_command(room,event,commandline):
   example:
     rsbot: add_signature Baduser "rule paragraph 3 at message url: https://matrix.to/#/!tBHU3434554VVVfuMP:matrix.org/$UV232444VR8-F9ch3eAZxlG2nUdakJXDMfYETdZVYCQ?via=matrix.org"
 
-        """
+""")
         if await matrix_api.send_text(room,help_text) == False:
           log.error("matrix_api.send_text()")
           return False
@@ -409,7 +409,7 @@ async def process_command(room,event,commandline):
         return True
 
       if len(parameters) < 3:
-        help_text="""command `add_signature` need 3 params.
+        help_text=_("""command `add_signature` need 3 params.
   syntax:
 
     my_botname_in_this_room: add_signature user_name_for_signature signature_text "description - Why signature added to user"
@@ -417,7 +417,7 @@ async def process_command(room,event,commandline):
   example:
     rsbot: add_signature Baduser "spammer" "This user spam in this room!"
 
-        """
+""")
         if await matrix_api.send_text(room,help_text) == False:
           log.error("matrix_api.send_text()")
           return False
@@ -856,7 +856,7 @@ async def process_command(room,event,commandline):
         return True
 
       if len(parameters) < 1:
-        help_text="""This command clear active rule interruptions for user.
+        help_text=_("""This command clear active rule interruptions for user.
   They will become as not active.
 
   command `clear_active_rule_interruption` need 1 param.
@@ -867,7 +867,7 @@ async def process_command(room,event,commandline):
   example:
     rsbot: clear_active_rule_interruption Baduser
 
-        """
+""")
         if await matrix_api.send_text(room,help_text) == False:
           log.error("matrix_api.send_text()")
           return False
@@ -928,7 +928,7 @@ async def process_command(room,event,commandline):
         return True
 
       if len(parameters) < 1:
-        help_text="""command `set_my_descr` need 1 params.
+        help_text=_("""command `set_my_descr` need 1 params.
 Command set own description for user. This can do only some user for self.
   syntax:
 
@@ -937,7 +937,7 @@ Command set own description for user. This can do only some user for self.
   example:
     rsbot: set_my_descr "I am good user. My github url: xxxx, My social url: xxxx"
 
-        """
+""")
         if await matrix_api.send_text(room,help_text) == False:
           log.error("matrix_api.send_text()")
           return False
@@ -963,7 +963,7 @@ Command set own description for user. This can do only some user for self.
 
     elif command == "show_user_descr" or command == _("show_user_descr"):
       if len(parameters) < 1:
-        help_text="""command `show_user_descr` need 1 params.
+        help_text=_("""command `show_user_descr` need 1 params.
 Command show own description for user. This description was seted user for self.
   syntax:
 
@@ -973,7 +973,7 @@ Command show own description for user. This description was seted user for self.
     rsbot: show_user_descr UserNick
     rsbot: show_user_descr @user:server
 
-        """
+""")
         if await matrix_api.send_text(room,help_text) == False:
           log.error("matrix_api.send_text()")
           return False
