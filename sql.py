@@ -125,7 +125,7 @@ def insert_signature(room_id,mxid,signature,signature_author,signature_descr):
       cur.execute('SELECT LASTVAL()')
       id_of_new_row = cur.fetchone()[0]
     except psycopg2.Error as e:
-      global_error_descr="I am unable insert data to tbl_sending_queue: %s" % e.pgerror
+      global_error_descr="I am unable insert data to tbl_users_info: %s" % e.pgerror
       log.error(global_error_descr)
       log.info("try rollback insertion for this connection")
       try:
@@ -575,3 +575,116 @@ def clear_active_rule_interruption(room_id,mxid):
     return False
   return True
 
+
+def add_user_descr(room_id,mxid,user_descr):
+  global config
+  global log
+  global conn
+  global cur
+  log.debug("start function")
+  ret=check_user_exist(room_id,mxid) 
+  if ret is None:
+    log.error("sql.check_user_exist()")
+    return False
+  if ret == 0:
+    return insert_user_descr(room_id,mxid,user_descr)
+  else:
+    return update_user_descr(room_id,mxid,user_descr)
+
+def update_user_descr(room_id,mxid,user_descr):
+  global config
+  global log
+  global conn
+  global cur
+
+  try:
+    log.debug("start function")
+    # формируем sql-запрос:
+    sql="update tbl_users_info SET user_description='%s' where mxid='%s' and room_id='%s'"%(user_descr,mxid,room_id)
+    log.debug("sql='%s'"%sql)
+    try:
+      cur.execute(sql)
+      conn.commit()
+    except psycopg2.Error as e:
+      global_error_descr="I am unable update data to tbl_users_info: %s" % e.pgerror
+      log.error(global_error_descr)
+      log.info("try rollback insertion for this connection")
+      try:
+        conn.rollback()
+      except psycopg2.Error as e:
+        log.error("sql error: %s" % e.pgerror)
+        return False
+      return False
+  except Exception as e:
+    log.error(get_exception_traceback_descr(e))
+    global_error_descr="internal script error - see logs"
+    log.error(global_error_descr)
+    return False
+  return True
+
+def insert_signature(room_id,mxid,user_descr):
+  global config
+  global log
+  global conn
+  global cur
+
+  try:
+    log.debug("start function")
+    # формируем sql-запрос:
+    columns = "mxid, room_id, user_descr"
+    values = "'%(mxid)s','%(room_id)s', '%(user_descr)s'"%\
+      {\
+        "mxid":mxid,\
+        "room_id":room_id,\
+        "user_descr":user_descr\
+      }
+    sql="insert INTO tbl_users_info (%s) VALUES (%s) RETURNING user_id"%(columns,values)
+    log.debug("sql='%s'"%sql)
+    try:
+      cur.execute(sql)
+      conn.commit()
+      cur.execute('SELECT LASTVAL()')
+      id_of_new_row = cur.fetchone()[0]
+    except psycopg2.Error as e:
+      global_error_descr="I am unable insert data to tbl_users_info: %s" % e.pgerror
+      log.error(global_error_descr)
+      log.info("try rollback insertion for this connection")
+      try:
+        conn.rollback()
+      except psycopg2.Error as e:
+        log.error("sql error: %s" % e.pgerror)
+        return False
+      return False
+  except Exception as e:
+    log.error(get_exception_traceback_descr(e))
+    global_error_descr="internal script error - see logs"
+    log.error(global_error_descr)
+    return False
+  return True
+
+def get_user_descr(room_id,mxid):
+  global config
+  global log
+  global conn
+  global cur
+  item = None
+  try:
+    log.debug("start function")
+    time_execute=time.time()
+    # формируем sql-запрос:
+    sql="select user_description from tbl_users_info where room_id='%s' and mxid='%s'"%(room_id,mxid)
+    log.debug("sql='%s'"%sql)
+    try:
+      cur.execute(sql)
+      item = cur.fetchone()
+    except psycopg2.Error as e:
+      log.error("sql error: %s" % e.pgerror)
+      return None
+    if item==None:
+      log.debug("no user records for room_id=%s and mxid=%s"%(room_id,mxid))
+      return None
+    log.debug("execute function time=%f"%(time.time()-time_execute))
+    return item[0]
+  except Exception as e:
+    log.error(get_exception_traceback_descr(e))
+    return None

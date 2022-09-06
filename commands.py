@@ -185,6 +185,9 @@ async def process_command(room,event,commandline):
   7. show_old_rule_interruption_descr - show old (not active) rule interruption description (for all old interruption) - be cafule with many old not active interruption for user - bot will spam messages
   8. clear_active_rule_interruption - clear active rule interruption count (when unban user)
   9. set_locale - change language of bot for this room
+  10. set_my_descr - set own description for user (can do only mxid for it's mxid)
+  11. show_user_descr - show description for user
+  12. clear_user_descr - clear description for user
       """)
       if await matrix_api.send_text(room,help_text) == False:
         log.error("matrix_api.send_text()")
@@ -908,6 +911,104 @@ async def process_command(room,event,commandline):
           return False
         # уведомляем пользователя, что всё получилось:
         text=_("success clear active rule interruptions for user %s")%signature_user_mxid
+        if await matrix_api.send_text(room,text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return True
+
+    elif command == "set_my_descr" or command == _("set_my_descr"):
+      if len(parameters) < 1:
+        help_text="""command `set_my_descr` need 1 params.
+Command set own description for user. This can do only some user for self.
+  syntax:
+
+    my_botname_in_this_room: set_my_descr "description of me"
+
+  example:
+    rsbot: set_my_descr "I am good user. My github url: xxxx, My social url: xxxx"
+
+        """
+        if await matrix_api.send_text(room,help_text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return True
+      else:
+        # параметров достаточно:
+        user_descr = parameters[0]
+        user_mxid = event.sender
+        log.debug("signature_user_mxid = %s"%user_mxid)
+        if sql.add_user_descr(room.room_id, user_mxid, user_descr) == False:
+          log.error("sql.add_user_descr()")
+          text=_("internal error in function: ") + "sql.add_user_descr()"
+          if await matrix_api.send_text(room,text) == False:
+            log.error("matrix_api.send_text()")
+            return False
+          return False
+        # уведомляем пользователя, что всё получилось:
+        text="""success add user_descr to user %s"""%user_mxid
+        if await matrix_api.send_text(room,text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return True
+
+    elif command == "show_user_descr" or command == _("show_user_descr"):
+      if len(parameters) < 1:
+        help_text="""command `show_user_descr` need 1 params.
+Command show own description for user. This description was seted user for self.
+  syntax:
+
+    my_botname_in_this_room: show_user_descr username
+
+  examples:
+    rsbot: show_user_descr UserNick
+    rsbot: show_user_descr @user:server
+
+        """
+        if await matrix_api.send_text(room,help_text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return True
+      else:
+        # параметров достаточно:
+        signature_user = parameters[0]
+
+        if signature_user in room.users:
+          # пользователь указан по MXID:
+          signature_user_mxid = signature_user
+        elif signature_user in room.names:
+          # пользователь указан по имени
+          if len(room.names[signature_user])>1:
+            # несколько пользователей с одинаковыми именами:
+            text=_("""nickname %s not uniqum in this room. Please, select user by mxid (as @user:server.com)""")%signature_user
+            log.warning(text)
+            if await matrix_api.send_text(room,text) == False:
+              log.error("matrix_api.send_text()")
+              return False
+            return True
+          else:
+            # пользователь указан по MXID:
+            signature_user_mxid = room.names[signature_user][0]
+        else:
+          # неизвестный пользователь:
+          text=_("nickname %s not known. Please, correct, or select user by mxid (as @user:server.com)")%signature_user
+          log.warning(text)
+          if await matrix_api.send_text(room,text) == False:
+            log.error("matrix_api.send_text()")
+            return False
+          return True
+        log.debug("signature_user_mxid = %s"%signature_user_mxid)
+
+        user_descr = sql.get_user_descr(room.room_id, signature_user_mxid)
+        if user_descr is None:
+          log.error("sql.get_user_descr()")
+          text=_("internal error in function: ") + "sql.get_user_descr()"
+          if await matrix_api.send_text(room,text) == False:
+            log.error("matrix_api.send_text()")
+            return False
+          return False
+        # уведомляем пользователя, что всё получилось:
+        text=_("""User description for user '%s' is:
+%s""")%(signature_user_mxid,user_descr)
         if await matrix_api.send_text(room,text) == False:
           log.error("matrix_api.send_text()")
           return False
