@@ -945,7 +945,7 @@ Command set own description for user. This can do only some user for self.
             return False
           return False
         # уведомляем пользователя, что всё получилось:
-        text="""success add user_descr to user %s"""%user_mxid
+        text=_("success add user_descr to user %s")%user_mxid
         if await matrix_api.send_text(room,text) == False:
           log.error("matrix_api.send_text()")
           return False
@@ -1007,8 +1007,81 @@ Command show own description for user. This description was seted user for self.
             return False
           return False
         # уведомляем пользователя, что всё получилось:
-        text=_("""User description for user '%s' is:
+        if user_descr == "":
+          text=_("User '%s' has no own description")%signature_user_mxid
+        else:
+          text=_("""User description for user '%s' is:
 %s""")%(signature_user_mxid,user_descr)
+        if await matrix_api.send_text(room,text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return True
+
+    elif command == "clear_user_descr" or command == _("clear_user_descr"):
+      # проверяем права доступа:
+      if is_power_level_for_signature(room,event.sender) == False:
+        log.warning("no power level for this")
+        text=_("you need more power level for this command")
+        log.warning(text)
+        if await matrix_api.send_text(room,text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return True
+
+      if len(parameters) < 1:
+        help_text=_("""This command clear user description. This can do only administrator or moderator.
+
+  command `clear_user_descr` need 1 params.
+  syntax:
+
+    my_botname_in_this_room: clear_user_descr user_name
+
+  example:
+    rsbot: clear_user_descr Baduser
+        """)
+        if await matrix_api.send_text(room,help_text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return True
+      else:
+        # параметров достаточно:
+        signature_user = parameters[0]
+
+        if signature_user in room.users:
+          # пользователь указан по MXID:
+          signature_user_mxid = signature_user
+        elif signature_user in room.names:
+          # пользователь указан по имени
+          if len(room.names[signature_user])>1:
+            # несколько пользователей с одинаковыми именами:
+            text=_("nickname %s not uniqum in this room. Please, select user by mxid (as @user:server.com)")%signature_user
+            log.warning(text)
+            if await matrix_api.send_text(room,text) == False:
+              log.error("matrix_api.send_text()")
+              return False
+            return True
+          else:
+            # пользователь указан по MXID:
+            signature_user_mxid = room.names[signature_user][0]
+        else:
+          # неизвестный пользователь:
+          text=_("nickname %s not known. Please, correct, or select user by mxid (as @user:server.com)")%signature_user
+          log.warning(text)
+          if await matrix_api.send_text(room,text) == False:
+            log.error("matrix_api.send_text()")
+            return False
+          return True
+        log.debug("signature_user_mxid = %s"%signature_user_mxid)
+
+        if sql.add_user_descr(room.room_id, signature_user_mxid, "") == False:
+          log.error("sql.add_user_descr()")
+          text=_("internal error in function: ") + "sql.add_user_descr()"
+          if await matrix_api.send_text(room,text) == False:
+            log.error("matrix_api.send_text()")
+            return False
+          return False
+        # уведомляем пользователя, что всё получилось:
+        text=_("success clear user_descr to user %s")%signature_user_mxid
         if await matrix_api.send_text(room,text) == False:
           log.error("matrix_api.send_text()")
           return False
