@@ -49,10 +49,10 @@ power_level_for_rule_interruption = ban
 
 # invite rules - who can invite this bot (mxid users and its domain) - this
 # options override all other options in this block:
-allow_users = good_user1@spammers.com good_user2@matrix.org
+allow_users = @good_user1:spammers.com @good_user2:matrix.org
 # allow whole domain (or all domains: *):
 allow_domains = *
 # disable some users. Also from allowed domains:
-deny_users = baduser@matrix.org baduser2@tt.net
+deny_users = @baduser:matrix.org @baduser2:tt.net
 # can disable some domains if allow was by mask '*':
 deny_domains = spammers.com spammers2.net
