@@ -444,3 +444,59 @@ def add_rule_interruption(room_id,mxid,rule_interruption_descr,mxid_author):
     log.error(get_exception_traceback_descr(e))
     return False
   return True
+
+# только активные нарушения - из одной таблицы:
+def get_active_rule_interruption_count(room_id,mxid):
+  global config
+  global log
+  global conn
+  global cur
+  item = None
+  try:
+    log.debug("start function")
+    time_execute=time.time()
+    # формируем sql-запрос:
+    sql="select rule_interruption_active_count from tbl_users_info where room_id='%s' and mxid='%s'"%(room_id,mxid)
+    log.debug("sql='%s'"%sql)
+    try:
+      cur.execute(sql)
+      item = cur.fetchone()
+    except psycopg2.Error as e:
+      log.error("sql error: %s" % e.pgerror)
+      return None
+    if item==None:
+      log.debug("no interruption records for room_id=%s and mxid=%s"%(room_id,mxid))
+      return None
+    log.debug("execute function time=%f"%(time.time()-time_execute))
+    return item[0]
+  except Exception as e:
+    log.error(get_exception_traceback_descr(e))
+    return None
+
+# функция даёт возможность получить активные или неактивные типы нарушений:
+def get_rule_interruption_count(room_id,mxid,active=True):
+  global config
+  global log
+  global conn
+  global cur
+  item = None
+  try:
+    log.debug("start function")
+    time_execute=time.time()
+    # формируем sql-запрос:
+    sql="select count(*) from tbl_rule_interruptions where active_rule_interruption=%s and user_id=(select user_id from tbl_users_info where room_id='%s' and mxid='%s');"%(active,room_id,mxid)
+    log.debug("sql='%s'"%sql)
+    try:
+      cur.execute(sql)
+      item = cur.fetchone()
+    except psycopg2.Error as e:
+      log.error("sql error: %s" % e.pgerror)
+      return None
+    if item==None:
+      log.debug("no interruption records for room_id=%s and mxid=%s"%(room_id,mxid))
+      return None
+    log.debug("execute function time=%f"%(time.time()-time_execute))
+    return item[0]
+  except Exception as e:
+    log.error(get_exception_traceback_descr(e))
+    return None

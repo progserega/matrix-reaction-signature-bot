@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+##!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import asyncio
 import nio
@@ -182,7 +182,7 @@ async def message_cb(room, event):
     #log.debug(event)
     #log.debug(room.power_levels)
 
-    # проверяем, что обращаются к нам:
+    # проверяем, что обращаются к нам (значит команда):
     nick_name = room.user_name(session["user_id"])
     log.debug("nick_name=%s"%nick_name)
     if re.search(' *%s *'%nick_name,event.body) is not None:
@@ -192,6 +192,18 @@ async def message_cb(room, event):
         return False
 
     # обычное сообщение:
+
+    # проверяем, есть ли актуальные нарушения для автора сообщения:
+    rule_interruption_count = sql.get_active_rule_interruption_count(room.room_id, event.sender)
+    if rule_interruption_count != None:
+      if rule_interruption_count > 0:
+        rule_interruption_text = "%d❗️"%rule_interruption_count
+        if await matrix_api.send_emotion(room,event,rule_interruption_text) == False:
+          log.error("matrix_api.send_emotion()")
+          return False
+      else:
+        log.debug("no active interruption for user: %s"%event.sender)
+
     # проверяем, есть ли подписи для автора:
     signature = sql.get_signature(room.room_id, event.sender)
     if signature != None:
