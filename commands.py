@@ -111,13 +111,13 @@ def parse_command_line(commandline):
     log.error(get_exception_traceback_descr(e))
     return None
 
-def is_power_level_for_signature(room,mxid):
+def is_power_level_for(room,mxid,power_level_options="power_level_for_signature"):
   global config
   global client
   global log
   try:
     log.debug("start function")
-    need_power_level_config = config["powers"]["power_level_for_signature"]
+    need_power_level_config = config["powers"][power_level_options]
     try:
       need_power_level_integer = int(need_power_level_config)
     except:
@@ -196,7 +196,7 @@ async def process_command(room,event,commandline):
 
     elif command == "set_locale" or command == _("set_locale"):
       # проверяем права доступа:
-      if is_power_level_for_signature(room,event.sender) == False:
+      if is_power_level_for(room,event.sender,"power_level_for_set_locale") == False:
         log.warning("no power level for this")
         text="""you need more power level for this command"""
         log.warning(text)
@@ -251,7 +251,7 @@ async def process_command(room,event,commandline):
 
     elif command == "enable_signature" or command == _("enable_signature"):
       # проверяем права доступа:
-      if is_power_level_for_signature(room,event.sender) == False:
+      if is_power_level_for(room,event.sender,"power_level_for_signature") == False:
         log.warning("no power level for this")
         text="""you need more power level for this command"""
         log.warning(text)
@@ -330,7 +330,7 @@ async def process_command(room,event,commandline):
 
     elif command == "add_rule_interruption" or command == _("add_rule_interruption"):
       # проверяем права доступа:
-      if is_power_level_for_signature(room,event.sender) == False:
+      if is_power_level_for(room,event.sender,"power_level_for_rule_interruption") == False:
         log.warning("no power level for this")
         text="""you need more power level for this command"""
         log.warning(text)
@@ -399,7 +399,7 @@ async def process_command(room,event,commandline):
 
     elif command == "add_signature" or command == _("add_signature"):
       # проверяем права доступа:
-      if is_power_level_for_signature(room,event.sender) == False:
+      if is_power_level_for(room,event.sender,"power_level_for_signature") == False:
         log.warning("no power level for this")
         text="""you need more power level for this command"""
         log.warning(text)
@@ -846,7 +846,7 @@ async def process_command(room,event,commandline):
 
     elif command == "clear_active_rule_interruption" or command == _("clear_active_rule_interruption"):
       # проверяем права доступа:
-      if is_power_level_for_signature(room,event.sender) == False:
+      if is_power_level_for(room,event.sender,"power_level_for_rule_interruption") == False:
         log.warning("no power level for this")
         text="""you need more power level for this command"""
         log.warning(text)
@@ -917,6 +917,16 @@ async def process_command(room,event,commandline):
         return True
 
     elif command == "set_my_descr" or command == _("set_my_descr"):
+      # проверяем права доступа:
+      if is_power_level_for(room,event.sender,"power_level_for_user_own_descr") == False:
+        log.warning("no power level for this")
+        text=_("you need more power level for this command")
+        log.warning(text)
+        if await matrix_api.send_text(room,text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return True
+
       if len(parameters) < 1:
         help_text="""command `set_my_descr` need 1 params.
 Command set own description for user. This can do only some user for self.
@@ -1019,7 +1029,7 @@ Command show own description for user. This description was seted user for self.
 
     elif command == "clear_user_descr" or command == _("clear_user_descr"):
       # проверяем права доступа:
-      if is_power_level_for_signature(room,event.sender) == False:
+      if is_power_level_for(room,event.sender,"power_level_for_clear_user_descr") == False:
         log.warning("no power level for this")
         text=_("you need more power level for this command")
         log.warning(text)
