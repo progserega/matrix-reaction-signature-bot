@@ -180,7 +180,10 @@ async def process_command(room,event,commandline):
   3. enable_signature - enable/disable showing signature for user
   4. show_signature - show signature for user
   5. add_rule_interruption - increment rule interruption
-  6. set_locale - change language of bot for this room
+  6. show_rule_interruption_stat - show active/all rule interruption count for user
+  6. show_active_rule_interruption - show active rule interruption description (for all interruption) - be cafule with many active interruption for user - bot will spam messages
+  7. clear_active_rule_interruption - clear active rule interruption count (when unban user)
+  8. set_locale - change language of bot for this room
       """)
       if await matrix_api.send_text(room,help_text) == False:
         log.error("matrix_api.send_text()")
@@ -549,6 +552,266 @@ async def process_command(room,event,commandline):
         "signature_descr":ret[4]\
         }
         # показываем отчёт:
+        if await matrix_api.send_text(room,text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return True
+
+    elif command == "show_rule_interruption_stat" or command == _("show_rule_interruption_stat"):
+
+      if len(parameters) < 1:
+        help_text=_("""This command show rule interruption stat for user.
+
+  command `show_rule_interruption_stat` need 1 params.
+  syntax:
+
+    my_botname_in_this_room: show_rule_interruption_stat user_name
+
+  example:
+    rsbot: show_rule_interruption_stat Baduser
+
+        """)
+        if await matrix_api.send_text(room,help_text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return True
+      else:
+        # параметров достаточно:
+        signature_user = parameters[0]
+
+        if signature_user in room.users:
+          # пользователь указан по MXID:
+          signature_user_mxid = signature_user
+        elif signature_user in room.names:
+          # пользователь указан по имени
+          if len(room.names[signature_user])>1:
+            # несколько пользователей с одинаковыми именами:
+            text="""nickname %s not uniqum in this room. Please, select user by mxid (as @user:server.com)"""%signature_user
+            log.warning(text)
+            if await matrix_api.send_text(room,text) == False:
+              log.error("matrix_api.send_text()")
+              return False
+            return True
+          else:
+            # пользователь указан по MXID:
+            signature_user_mxid = room.names[signature_user][0]
+        else:
+          # неизвестный пользователь:
+          text="""nickname %s not known. Please, correct, or select user by mxid (as @user:server.com)"""%signature_user
+          log.warning(text)
+          if await matrix_api.send_text(room,text) == False:
+            log.error("matrix_api.send_text()")
+            return False
+          return True
+        log.debug("signature_user_mxid = %s"%signature_user_mxid)
+
+        ret = sql.check_user_exist(room.room_id, signature_user_mxid)
+        if ret is None:
+          log.error("sql.check_user_exist()")
+          text=_("""internal error sql.check_user_exist()""")
+          if await matrix_api.send_text(room,text) == False:
+            log.error("matrix_api.send_text()")
+            return False
+          return False
+        if ret == 0:
+          text = _("no such user in db: %s")%signature_user_mxid
+          log.debug(text)
+          if await matrix_api.send_text(room,text) == False:
+            log.error("matrix_api.send_text()")
+            return False
+          return False
+
+        # получаем данные о записи:
+        # активные:
+        active_rule_interruption = sql.get_rule_interruption_count(room.room_id, signature_user_mxid,active=True)
+        # неактивные:
+        all_rule_interruption = sql.get_rule_interruption_count(room.room_id, signature_user_mxid,active=False)
+        if active_rule_interruption is None or all_rule_interruption is None:
+          log.error("sql.get_rule_interruption_count()")
+          text=_("internal error in function: ") + "sql.get_rule_interruption_count()"
+          if await matrix_api.send_text(room,text) == False:
+            log.error("matrix_api.send_text()")
+            return False
+          return False
+        # все:
+        all_rule_interruption += active_rule_interruption
+        # формируем отчёт:
+        text = _("""User %(signature_user_mxid)s have:
+  1. active rule interruption: %(active_rule_interruption)d
+  2. all rule interruption: %(all_rule_interruption)d
+  """)%{\
+        "signature_user_mxid":signature_user_mxid,\
+        "active_rule_interruption":active_rule_interruption,\
+        "all_rule_interruption":all_rule_interruption\
+        }
+        # показываем отчёт:
+        if await matrix_api.send_text(room,text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return True
+
+    elif command == "show_active_rule_interruption" or command == _("show_active_rule_interruption"):
+
+      if len(parameters) < 1:
+        help_text=_("""This command show description for active rule interruption for user.
+
+  command `show_active_rule_interruption` need 1 params.
+  syntax:
+
+    my_botname_in_this_room: show_active_rule_interruption user_name
+
+  example:
+    rsbot: show_active_rule_interruption Baduser
+
+        """)
+        if await matrix_api.send_text(room,help_text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return True
+      else:
+        # параметров достаточно:
+        signature_user = parameters[0]
+
+        if signature_user in room.users:
+          # пользователь указан по MXID:
+          signature_user_mxid = signature_user
+        elif signature_user in room.names:
+          # пользователь указан по имени
+          if len(room.names[signature_user])>1:
+            # несколько пользователей с одинаковыми именами:
+            text=_("""nickname %s not uniqum in this room. Please, select user by mxid (as @user:server.com)""")%signature_user
+            log.warning(text)
+            if await matrix_api.send_text(room,text) == False:
+              log.error("matrix_api.send_text()")
+              return False
+            return True
+          else:
+            # пользователь указан по MXID:
+            signature_user_mxid = room.names[signature_user][0]
+        else:
+          # неизвестный пользователь:
+          text=_("nickname %s not known. Please, correct, or select user by mxid (as @user:server.com)")%signature_user
+          log.warning(text)
+          if await matrix_api.send_text(room,text) == False:
+            log.error("matrix_api.send_text()")
+            return False
+          return True
+        log.debug("signature_user_mxid = %s"%signature_user_mxid)
+
+        ret = sql.check_user_exist(room.room_id, signature_user_mxid)
+        if ret is None:
+          log.error("sql.check_user_exist()")
+          text=_("internal error in function: ") + "sql.check_user_exist()"
+          if await matrix_api.send_text(room,text) == False:
+            log.error("matrix_api.send_text()")
+            return False
+          return False
+        if ret == 0:
+          text = _("no such user in db: %s")%signature_user_mxid
+          log.debug(text)
+          if await matrix_api.send_text(room,text) == False:
+            log.error("matrix_api.send_text()")
+            return False
+          return False
+
+        # получаем данные о записи:
+        # активные:
+        rule_interruption_descr_list = sql.get_rule_interruption_descr(room.room_id, signature_user_mxid,active=True)
+        if rule_interruption_descr_list is None:
+          log.error("sql.get_rule_interruption_descr()")
+          text=_("internal error in function: ") + "sql.get_rule_interruption_descr()"
+          if await matrix_api.send_text(room,text) == False:
+            log.error("matrix_api.send_text()")
+            return False
+          return False
+        # формируем отчёт:
+        if len(rule_interruption_descr_list)==0:
+          log.info("no active rule interruptions for user %s"%signature_user_mxid)
+          text=_("no active rule interruptions for user %s")%signature_user_mxid
+          if await matrix_api.send_text(room,text) == False:
+            log.error("matrix_api.send_text()")
+            return False
+        else:
+          for item in rule_interruption_descr_list:
+            text = _("""Admin %(admin)s at %(date)s add rule interruption by user %(signature_user_mxid)s with descr: %(descr)s""")%{\
+              "admin":item[0],\
+              "date":item[1],\
+              "signature_user_mxid":signature_user_mxid,\
+              "descr":item[2]\
+              }
+            # показываем отчёт:
+            if await matrix_api.send_text(room,text) == False:
+              log.error("matrix_api.send_text()")
+              return False
+        return True
+
+    elif command == "clear_active_rule_interruption" or command == _("clear_active_rule_interruption"):
+      # проверяем права доступа:
+      if is_power_level_for_signature(room,event.sender) == False:
+        log.warning("no power level for this")
+        text="""you need more power level for this command"""
+        log.warning(text)
+        if await matrix_api.send_text(room,text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return True
+
+      if len(parameters) < 1:
+        help_text="""This command clear active rule interruptions for user.
+  They will become as not active.
+
+  command `clear_active_rule_interruption` need 1 param.
+  syntax:
+
+    my_botname_in_this_room: clear_active_rule_interruption user_name
+
+  example:
+    rsbot: clear_active_rule_interruption Baduser
+
+        """
+        if await matrix_api.send_text(room,help_text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return True
+      else:
+        # параметров достаточно:
+        signature_user = parameters[0]
+
+        if signature_user in room.users:
+          # пользователь указан по MXID:
+          signature_user_mxid = signature_user
+        elif signature_user in room.names:
+          # пользователь указан по имени
+          if len(room.names[signature_user])>1:
+            # несколько пользователей с одинаковыми именами:
+            text=_("nickname %s not uniqum in this room. Please, select user by mxid (as @user:server.com)")%signature_user
+            log.warning(text)
+            if await matrix_api.send_text(room,text) == False:
+              log.error("matrix_api.send_text()")
+              return False
+            return True
+          else:
+            # пользователь указан по MXID:
+            signature_user_mxid = room.names[signature_user][0]
+        else:
+          # неизвестный пользователь:
+          text=_("nickname %s not known. Please, correct, or select user by mxid (as @user:server.com)")%signature_user
+          log.warning(text)
+          if await matrix_api.send_text(room,text) == False:
+            log.error("matrix_api.send_text()")
+            return False
+          return True
+        log.debug("signature_user_mxid = %s"%signature_user_mxid)
+
+        if sql.clear_active_rule_interruption(room.room_id, signature_user_mxid) == False:
+          log.error("sql.clear_active_rule_interruption()")
+          text=_("internal error in function: ") + "sql.clear_active_rule_interruption()"
+          if await matrix_api.send_text(room,text) == False:
+            log.error("matrix_api.send_text()")
+            return False
+          return False
+        # уведомляем пользователя, что всё получилось:
+        text=_("success clear active rule interruptions for user %s")%signature_user_mxid
         if await matrix_api.send_text(room,text) == False:
           log.error("matrix_api.send_text()")
           return False

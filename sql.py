@@ -500,3 +500,78 @@ def get_rule_interruption_count(room_id,mxid,active=True):
   except Exception as e:
     log.error(get_exception_traceback_descr(e))
     return None
+
+# функция даёт возможность получить активные или неактивные описания нарушений:
+def get_rule_interruption_descr(room_id,mxid,active=True):
+  global config
+  global log
+  global conn
+  global cur
+  item = None
+  try:
+    log.debug("start function")
+    time_execute=time.time()
+    # формируем sql-запрос:
+    sql="select rule_interruption_author,time_create,description from tbl_rule_interruptions where active_rule_interruption=%s and user_id=(select user_id from tbl_users_info where room_id='%s' and mxid='%s');"%(active,room_id,mxid)
+    log.debug("sql='%s'"%sql)
+    try:
+      cur.execute(sql)
+      item = cur.fetchall()
+    except psycopg2.Error as e:
+      log.error("sql error: %s" % e.pgerror)
+      return None
+    if item==None:
+      log.debug("no interruption records for room_id=%s and mxid=%s"%(room_id,mxid))
+      return None
+    log.debug("execute function time=%f"%(time.time()-time_execute))
+    return item
+  except Exception as e:
+    log.error(get_exception_traceback_descr(e))
+    return None
+
+# очищаем список активных замечаний:
+def clear_active_rule_interruption(room_id,mxid):
+  global config
+  global log
+  global conn
+  global cur
+  try:
+    log.debug("start function")
+    # формируем sql-запрос:
+    ret = check_user_exist(room_id,mxid)
+    if ret is None:
+      log.error("sql.check_user_exist()")
+      return False
+    # добавляем запись о нарушении правил:
+    sql="""START TRANSACTION;
+      update tbl_rule_interruptions
+        set active_rule_interruption=False
+        where
+        user_id=(select user_id from tbl_users_info where mxid='%(mxid)s' and room_id='%(room_id)s');
+
+        update tbl_users_info set
+          rule_interruption_active_count = 0
+          where mxid='%(mxid)s' and room_id='%(room_id)s';
+    COMMIT;
+    """%{\
+      "room_id":room_id,\
+      "mxid":mxid\
+    }
+    log.debug("sql='%s'"%sql)
+    try:
+      cur.execute(sql)
+      conn.commit()
+    except psycopg2.Error as e:
+      log.error("I am unable update data: %s" % e.pgerror)
+      log.info("try rollback insertion for this connection")
+      try:
+        conn.rollback()
+      except psycopg2.Error as e:
+        log.error("sql error: %s" % e.pgerror)
+        return False
+      return False
+  except Exception as e:
+    log.error(get_exception_traceback_descr(e))
+    return False
+  return True
+
