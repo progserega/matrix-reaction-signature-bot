@@ -160,6 +160,11 @@ async def invite_cb(room: nio.MatrixRoom, event: nio.InviteEvent):
       cur_room = client.rooms[room.room_id]
       log.info("join to room %s by invite from %s"%(cur_room.name, event.sender))
 
+    # save sync token
+    session["token"] = client.next_batch
+    if write_details_to_disk(session) == False:
+      log.error("write session to disk - at write_details_to_disk()")
+      return False
     return True
   except Exception as e:
     log.error(get_exception_traceback_descr(e))
@@ -173,8 +178,9 @@ async def message_cb(room, event):
   try:
     log.debug("start function")
     #log.debug(room.room_id)
+    #FIXME
     #log.debug(event)
-    log.debug(room.power_levels)
+    #log.debug(room.power_levels)
 
     # проверяем, что обращаются к нам:
     nick_name = room.user_name(session["user_id"])
@@ -196,6 +202,13 @@ async def message_cb(room, event):
     if await matrix_api.set_read_marker(room,event) == False:
       log.error("matrix_api.set_read_marker()")
       return False
+
+    # save sync token
+    session["token"] = client.next_batch
+    if write_details_to_disk(session) == False:
+      log.error("write session to disk - at write_details_to_disk()")
+      return False
+
     return True
   except Exception as e:
     log.error(get_exception_traceback_descr(e))
@@ -203,11 +216,14 @@ async def message_cb(room, event):
 
 def write_details_to_disk(session) -> None:
   global config
+  global log
+  log.debug("start function")
   try:
     # open the config file in write-mode
     with open(config["matrix"]["session_store_path"], "w") as f:
       # write the login details to disk
       json.dump(session,f)
+    return True
   except Exception as e:
     log.error(get_exception_traceback_descr(e))
     return False
@@ -268,20 +284,9 @@ async def main():
       return False
     log.info("matrix_api.init()")
     
-    while True:
-      resp = await sync()
-      if resp is not None:
-        # save token
-        write_details_to_disk(session)
-      else:
-        log.error("sync")
-      log.debug("iteration")
-      time.sleep(3)
-    #f=open("out.json","w+")
-    #f.write(json.dumps(resp, indent=4, sort_keys=True,ensure_ascii=True))
-    #f.close()
-    #sys.exit(0)
-    #await client.sync_forever(timeout=30000,full_state=True)#,since="token123")
+    # бесконечный внутренний цикл опроса состояния:
+    await client.sync_forever(timeout=300,full_state=True,since=session['token'],loop_sleep_time=3000)
+    return True
   except Exception as e:
     log.error(get_exception_traceback_descr(e))
     return False
