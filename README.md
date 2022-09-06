@@ -31,7 +31,7 @@ Install steps:
 8. create config: `cp config.ini.example config.ini`
 9. create matrix user and add it params to bot config
 9. fix need options in config (see comments in config)
-10. start bot as: `python3 bot.py config.ini` or use systemd unit-file from source
+10. start bot as: `python3 bot.py config.ini` or use systemd unit-file from source (file: matrix-reaction-signature-bot.service)
 11. invite bot matrix user to room (check, that you allow for this in [invites] section in config.ini)
 12. now you can use this bot in your room. 
 13. All feature allow only for room moderators by default (see [powers] sections in config.ini)
