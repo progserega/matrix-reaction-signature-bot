@@ -4,75 +4,266 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-08-22 01:23+1000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2022-09-06 19:31+1000\n"
+"PO-Revision-Date: 2022-09-06 19:32+1000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
+"X-Generator: Poedit 2.3\n"
 
-
-#: commands.py:170
+#: commands.py:176
 msgid "help"
 msgstr ""
 
-#: commands.py:171
+#: commands.py:177
 msgid ""
 "I am admin reaction bot.\n"
-"1. help - this help\n"
-"2. add_signature - add signature to user\n"
-"3. enable_signature - enable/disable showing signature for user\n"
-"4. show_signature - show signature for user\n"
-"5. add_rule_interruption - increment rule interruption\n"
-"6. set_locale - change language of bot for this room\n"
-"    "
+"  1. help - this help\n"
+"  2. add_signature - add signature to user\n"
+"  3. enable_signature - enable/disable showing signature for user\n"
+"  4. show_signature - show signature for user\n"
+"  5. add_rule_interruption - increment rule interruption\n"
+"  6. show_rule_interruption_stat - show active/all rule interruption count "
+"for user\n"
+"  6. show_active_rule_interruption_descr - show active rule interruption "
+"description (for all interruption) - be cafule with many active interruption "
+"for user - bot will spam messages\n"
+"  7. show_old_rule_interruption_descr - show old (not active) rule "
+"interruption description (for all old interruption) - be cafule with many "
+"old not active interruption for user - bot will spam messages\n"
+"  8. clear_active_rule_interruption - clear active rule interruption count "
+"(when unban user)\n"
+"  9. set_locale - change language of bot for this room\n"
+"  10. set_my_descr - set own description for user (can do only mxid for it's "
+"mxid)\n"
+"  11. show_user_descr - show description for user\n"
+"  12. clear_user_descr - clear description for user\n"
+"      "
 msgstr ""
 
-#: commands.py:184
+#: commands.py:197
 msgid "set_locale"
 msgstr ""
 
-#: commands.py:228
+#: commands.py:252
 msgid "enable_signature"
 msgstr ""
 
-#: commands.py:307
+#: commands.py:331
 msgid "add_rule_interruption"
 msgstr ""
 
-#: commands.py:376
+#: commands.py:400
 msgid "add_signature"
 msgstr ""
 
-#: commands.py:446
+#: commands.py:470
 msgid "show_signature"
 msgstr ""
 
-#: commands.py:497
+#: commands.py:473
+msgid ""
+"This command show signature record for user.\n"
+"\n"
+"  command `show_signature` need 1 params.\n"
+"  syntax:\n"
+"\n"
+"    my_botname_in_this_room: show_signature user_name\n"
+"\n"
+"  example:\n"
+"    rsbot: show_signature Baduser\n"
+"\n"
+"        "
+msgstr ""
+
+#: commands.py:521 commands.py:615
 msgid "internal error sql.check_user_exist()"
 msgstr ""
 
-#: commands.py:514
+#: commands.py:538
 msgid "internal error sql.get_signature_descr()"
 msgstr ""
 
-#: commands.py:520
+#: commands.py:544
 msgid ""
 "User %(signature_user_mxid)s:\n"
-"1. signature: %(signature)s\n"
-"2. Author of signature: %(signature_author)s\n"
-"3. Time create/update of signature: %(signature_time_create)s\n"
-"4. Show signature: %(signature_show)s\n"
-"5. Description signature: %(signature_descr)s\n"
+"  1. signature: %(signature)s\n"
+"  2. Author of signature: %(signature_author)s\n"
+"  3. Time create/update of signature: %(signature_time_create)s\n"
+"  4. Show signature: %(signature_show)s\n"
+"  5. Description signature: %(signature_descr)s\n"
+"  "
 msgstr ""
 
-#: commands.py:542
+#: commands.py:564
+msgid "show_rule_interruption_stat"
+msgstr ""
+
+#: commands.py:567
+msgid ""
+"This command show rule interruption stat for user.\n"
+"\n"
+"  command `show_rule_interruption_stat` need 1 params.\n"
+"  syntax:\n"
+"\n"
+"    my_botname_in_this_room: show_rule_interruption_stat user_name\n"
+"\n"
+"  example:\n"
+"    rsbot: show_rule_interruption_stat Baduser\n"
+"\n"
+"        "
+msgstr ""
+
+#: commands.py:621 commands.py:714 commands.py:809
+msgid "no such user in db: %s"
+msgstr ""
+
+#: commands.py:635 commands.py:708 commands.py:726 commands.py:803
+#: commands.py:821 commands.py:907 commands.py:942 commands.py:1004
+#: commands.py:1078
+msgid "internal error in function: "
+msgstr ""
+
+#: commands.py:643
+msgid ""
+"User %(signature_user_mxid)s have:\n"
+"  1. active rule interruption: %(active_rule_interruption)d\n"
+"  2. all rule interruption: %(all_rule_interruption)d\n"
+"  "
+msgstr ""
+
+#: commands.py:657
+msgid "show_active_rule_interruption_descr"
+msgstr ""
+
+#: commands.py:660
+msgid ""
+"This command show description for active rule interruption for user.\n"
+"\n"
+"  command `show_active_rule_interruption_descr` need 1 params.\n"
+"  syntax:\n"
+"\n"
+"    my_botname_in_this_room: show_active_rule_interruption_descr user_name\n"
+"\n"
+"  example:\n"
+"    rsbot: show_active_rule_interruption_descr Baduser\n"
+"\n"
+"        "
+msgstr ""
+
+#: commands.py:686 commands.py:781 commands.py:886 commands.py:982
+#: commands.py:1057
+msgid ""
+"nickname %s not uniqum in this room. Please, select user by mxid (as @user:"
+"server.com)"
+msgstr ""
+
+#: commands.py:697 commands.py:792 commands.py:897 commands.py:993
+#: commands.py:1068
+msgid ""
+"nickname %s not known. Please, correct, or select user by mxid (as @user:"
+"server.com)"
+msgstr ""
+
+#: commands.py:734
+msgid "no active rule interruptions for user %s"
+msgstr ""
+
+#: commands.py:740 commands.py:835
+msgid ""
+"Admin %(admin)s at %(date)s add rule interruption by user "
+"%(signature_user_mxid)s with descr: %(descr)s"
+msgstr ""
+
+#: commands.py:752
+msgid "show_old_rule_interruption_descr"
+msgstr ""
+
+#: commands.py:755
+msgid ""
+"This command show description for old (not active) rule interruption for "
+"user.\n"
+"\n"
+"  command `show_old_rule_interruption_descr` need 1 params.\n"
+"  syntax:\n"
+"\n"
+"    my_botname_in_this_room: show_old_rule_interruption_descr user_name\n"
+"\n"
+"  example:\n"
+"    rsbot: show_old_rule_interruption_descr Baduser\n"
+"\n"
+"        "
+msgstr ""
+
+#: commands.py:829
+msgid "no old rule interruptions for user %s"
+msgstr ""
+
+#: commands.py:847
+msgid "clear_active_rule_interruption"
+msgstr ""
+
+#: commands.py:913
+msgid "success clear active rule interruptions for user %s"
+msgstr ""
+
+#: commands.py:919
+msgid "set_my_descr"
+msgstr ""
+
+#: commands.py:948
+msgid "success add user_descr to user %s"
+msgstr ""
+
+#: commands.py:954
+msgid "show_user_descr"
+msgstr ""
+
+#: commands.py:1011
+msgid "User '%s' has no own description"
+msgstr ""
+
+#: commands.py:1013
+msgid ""
+"User description for user '%s' is:\n"
+"%s"
+msgstr ""
+
+#: commands.py:1020
+msgid "clear_user_descr"
+msgstr ""
+
+#: commands.py:1024
+msgid "you need more power level for this command"
+msgstr ""
+
+#: commands.py:1032
+msgid ""
+"This command clear user description. This can do only administrator or "
+"moderator.\n"
+"\n"
+"  command `clear_user_descr` need 1 params.\n"
+"  syntax:\n"
+"\n"
+"    my_botname_in_this_room: clear_user_descr user_name\n"
+"\n"
+"  example:\n"
+"    rsbot: clear_user_descr Baduser\n"
+"        "
+msgstr ""
+
+#: commands.py:1084
+msgid "success clear user_descr to user %s"
+msgstr ""
+
+#: commands.py:1092
 msgid ""
 "unknown command!\n"
-"Please, use 'help' or empty command (only my room nick name) for help.\n"
-"    "
+"  Please, use 'help' or empty command (only my room nick name) for help.\n"
+"      "
 msgstr ""
-
