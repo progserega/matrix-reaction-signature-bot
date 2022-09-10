@@ -297,7 +297,10 @@ async def main():
     log.info("matrix_api.init()")
     
     # бесконечный внутренний цикл опроса состояния:
-    await client.sync_forever(timeout=300,full_state=True,since=session['token'],loop_sleep_time=3000)
+    if 'token' in session:
+      await client.sync_forever(timeout=300,full_state=True,since=session['token'],loop_sleep_time=3000)
+    else:
+      await client.sync_forever(timeout=300,full_state=True,loop_sleep_time=3000)
     return True
   except Exception as e:
     log.error(get_exception_traceback_descr(e))
