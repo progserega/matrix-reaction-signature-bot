@@ -185,8 +185,8 @@ async def message_cb(room, event):
     # проверяем, что обращаются к нам (значит команда):
     nick_name = room.user_name(session["user_id"])
     log.debug("nick_name=%s"%nick_name)
-    if re.search(' *%s *'%nick_name,event.body) is not None:
-      command = re.sub(' *%s *:* *'%nick_name, '', event.body)
+    if re.search('^ *%s *'%nick_name,event.body) is not None:
+      command = re.sub('^ *%s *:* *'%nick_name, '', event.body)
       if await commands.process_command(room, event, command) == False:
         log.error("commands.process_command()")
         return False
