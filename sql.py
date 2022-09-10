@@ -45,10 +45,19 @@ def init(log_param,config_param):
 def connect_to_db():
   global conn
   global cur
+  db_params = {}
+  if "db_name" in config["database"]:
+    db_params['dbname'] = config["database"]["db_name"]
+  if "db_user" in config["database"]:
+    db_params['user'] = config["database"]["db_user"]
+  if "db_host" in config["database"]:
+    db_params['host'] = config["database"]["db_host"]
+  if "db_passwd" in config["database"]:
+    db_params['password'] = config["database"]["db_passwd"]
   try:
     log.debug("start function")
-    log.debug("connect to: dbname='" + config["database"]["db_name"] + "' user='" +config["database"]["db_user"] + "' host='" + config["database"]["db_host"] + "' password='" + config["database"]["db_passwd"] + "'")
-    conn = psycopg2.connect("dbname='" + config["database"]["db_name"] + "' user='" +config["database"]["db_user"] + "' host='" + config["database"]["db_host"] + "' password='" + config["database"]["db_passwd"] + "'")
+    log.debug("connect to: dbname='" + db_params.get('dbname','') + "' user='" + db_params.get('user','') + "' host='" + db_params.get('host','') + "' password='" + db_params.get('password','') + "'")
+    conn = psycopg2.connect(**db_params)
     cur = conn.cursor()
   except Exception as e:
     log.error(get_exception_traceback_descr(e))
