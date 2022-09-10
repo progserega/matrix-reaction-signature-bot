@@ -622,7 +622,7 @@ def update_user_descr(room_id,mxid,user_descr):
     return False
   return True
 
-def insert_signature(room_id,mxid,user_descr):
+def insert_user_descr(room_id,mxid,user_descr):
   global config
   global log
   global conn
@@ -631,7 +631,7 @@ def insert_signature(room_id,mxid,user_descr):
   try:
     log.debug("start function")
     # формируем sql-запрос:
-    columns = "mxid, room_id, user_descr"
+    columns = "mxid, room_id, user_description"
     values = "'%(mxid)s','%(room_id)s', '%(user_descr)s'"%\
       {\
         "mxid":mxid,\
