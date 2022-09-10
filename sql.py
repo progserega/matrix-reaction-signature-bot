@@ -693,6 +693,8 @@ def get_user_descr(room_id,mxid):
       log.debug("no user records for room_id=%s and mxid=%s"%(room_id,mxid))
       return None
     log.debug("execute function time=%f"%(time.time()-time_execute))
+    if item[0] is None:
+      return ""
     return item[0]
   except Exception as e:
     log.error(get_exception_traceback_descr(e))
