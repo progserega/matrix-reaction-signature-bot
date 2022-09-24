@@ -87,7 +87,7 @@ def parse_command_line(commandline):
     params = re.split('"|\'| ',commandline)
     log.debug(params)
 
-    # собираем папраметры:
+    # собираем параметры:
     result_params = []
     many_words = False
     current_many_words_param = ""
@@ -102,9 +102,17 @@ def parse_command_line(commandline):
           current_many_words_param+=param
           current_many_words_param+=" "
         else:
-          many_words = False
-          result_params.append(current_many_words_param.strip())
+          if len(current_many_words_param.strip()) > 0 and current_many_words_param.strip() != " ":
+            # только если не пустые пробелы - добавляем как многословный параметр:
+            result_params.append(current_many_words_param.strip())
+            # и помечаем, что многословный параметр закончился:
+            many_words = False
           current_many_words_param=""
+    if current_many_words_param != "":
+      # забытая кавычка в конце строки или ещё что:
+      if len(current_many_words_param.strip()) > 0 and current_many_words_param.strip() != " ":
+        # только если не пустые пробелы - добавляем как многословный параметр:
+        result_params.append(current_many_words_param.strip())
     log.debug(result_params)
     return result_params
   except Exception as e:
