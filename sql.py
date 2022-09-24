@@ -75,18 +75,12 @@ def update_signature(room_id,mxid,signature,signature_author,signature_descr):
   try:
     log.debug("start function")
     # формируем sql-запрос:
-    columns = "signature, signature_author, signature_time_create, signature_description"
-    values = "'%(signature)s', '%(signature_author)s', %(signature_time_create)s, '%(signature_description)s'"%\
-      {\
-        "signature":signature,\
-        "signature_author":signature_author,\
-        "signature_time_create":psycopg2.TimestampFromTicks(time.time()),\
-        "signature_description":signature_descr\
-      }
-    sql="update tbl_users_info SET (%s) = (%s) where mxid='%s' and room_id='%s'"%(columns,values,mxid,room_id)
+    sql="""update tbl_users_info SET
+      (signature, signature_author, signature_time_create, signature_description) =
+      (%s, %s, %s, %s) where mxid = %s and room_id = %s"""
     log.debug("sql='%s'"%sql)
     try:
-      cur.execute(sql)
+      cur.execute(sql,(signature,signature_author,psycopg2.TimestampFromTicks(time.time()),signature_descr,mxid,room_id))
       conn.commit()
     except psycopg2.Error as e:
       global_error_descr="I am unable update data to tbl_users_info: %s" % e.pgerror
@@ -116,20 +110,12 @@ def insert_signature(room_id,mxid,signature,signature_author,signature_descr):
   try:
     log.debug("start function")
     # формируем sql-запрос:
-    columns = "mxid, room_id, signature, signature_author, signature_time_create, signature_description"
-    values = "'%(mxid)s','%(room_id)s', '%(signature)s', '%(signature_author)s', %(signature_time_create)s, '%(signature_description)s'"%\
-      {\
-        "mxid":mxid,\
-        "room_id":room_id,\
-        "signature":signature,\
-        "signature_author":signature_author,\
-        "signature_time_create":psycopg2.TimestampFromTicks(time.time()),\
-        "signature_description":signature_descr\
-      }
-    sql="insert INTO tbl_users_info (%s) VALUES (%s) RETURNING user_id"%(columns,values)
+    sql="""insert INTO tbl_users_info
+      (mxid, room_id, signature, signature_author, signature_time_create, signature_description)
+      VALUES (%s,%s,%s,%s,%s,%s) RETURNING user_id"""
     log.debug("sql='%s'"%sql)
     try:
-      cur.execute(sql)
+      cur.execute(sql,(mxid,room_id,signature,signature_author,psycopg2.TimestampFromTicks(time.time()),signature_descr))
       conn.commit()
       cur.execute('SELECT LASTVAL()')
       id_of_new_row = cur.fetchone()[0]
@@ -158,10 +144,10 @@ def enable_signature(room_id,mxid,enable_flag):
 
   try:
     # формируем sql-запрос:
-    sql="update tbl_users_info SET signature_show=%s where mxid='%s' and room_id='%s'"%(enable_flag,mxid,room_id)
+    sql="update tbl_users_info SET signature_show = %s where mxid = %s and room_id = %s"
     log.debug("sql='%s'"%sql)
     try:
-      cur.execute(sql)
+      cur.execute(sql,(enable_flag,mxid,room_id))
       conn.commit()
     except psycopg2.Error as e:
       global_error_descr="I am unable update data to tbl_users_info: %s" % e.pgerror
@@ -187,7 +173,7 @@ def add_signature(room_id,mxid,signature,signature_author,signature_descr):
   global conn
   global cur
   log.debug("start function")
-  ret=check_user_exist(room_id,mxid) 
+  ret=check_user_exist(room_id,mxid)
   if ret is None:
     log.error("sql.check_user_exist()")
     return False
@@ -206,10 +192,10 @@ def get_signature(room_id,mxid):
     log.debug("start function")
     time_execute=time.time()
     # формируем sql-запрос:
-    sql="select signature from tbl_users_info where room_id='%s' and mxid='%s' and signature_show=True"%(room_id,mxid)
+    sql="select signature from tbl_users_info where room_id = %s and mxid = %s and signature_show=True"
     log.debug("sql='%s'"%sql)
     try:
-      cur.execute(sql)
+      cur.execute(sql,(room_id,mxid))
       item = cur.fetchone()
     except psycopg2.Error as e:
       log.error("sql error: %s" % e.pgerror)
@@ -233,10 +219,10 @@ def get_room_settings(room_id):
     log.debug("start function")
     time_execute=time.time()
     # формируем sql-запрос:
-    sql="select name,value from tbl_room_settings where room_id='%s'"%room_id
+    sql="select name,value from tbl_room_settings where room_id = %s"
     log.debug("sql='%s'"%sql)
     try:
-      cur.execute(sql)
+      cur.execute(sql,(room_id,))
       item = cur.fetchall()
     except psycopg2.Error as e:
       log.error("sql error: %s" % e.pgerror)
@@ -259,15 +245,12 @@ def set_global_setting(name,value):
     log.debug("start function")
     # формируем sql-запрос:
     sql="""
-INSERT INTO tbl_global_settings (name,value) VALUES ('%(name)s','%(value)s')
-ON CONFLICT (name) DO UPDATE SET value = '%(value)s';
-    """%{\
-      "name":name,\
-      "value":value\
-    }
+INSERT INTO tbl_global_settings (name,value) VALUES (%s, %s)
+ON CONFLICT (name) DO UPDATE SET value = %s;
+    """
     log.debug("sql='%s'"%sql)
     try:
-      cur.execute(sql)
+      cur.execute(sql,(name,value,value))
       conn.commit()
     except psycopg2.Error as e:
       global_error_descr="I am unable insert/update data: %s" % e.pgerror
@@ -293,16 +276,12 @@ def set_room_setting(room_id,name,value):
     log.debug("start function")
     # формируем sql-запрос:
     sql="""
-INSERT INTO tbl_room_settings (room_id,name,value) VALUES ('%(room_id)s','%(name)s','%(value)s')
-ON CONFLICT (room_id,name) DO UPDATE SET value = '%(value)s';
-    """%{\
-      "room_id":room_id,\
-      "name":name,\
-      "value":value\
-    }
+INSERT INTO tbl_room_settings (room_id,name,value) VALUES (%s, %s, %s)
+ON CONFLICT (room_id,name) DO UPDATE SET value = %s;
+    """
     log.debug("sql='%s'"%sql)
     try:
-      cur.execute(sql)
+      cur.execute(sql,(room_id,name,value,value))
       conn.commit()
     except psycopg2.Error as e:
       global_error_descr="I am unable insert/update data: %s" % e.pgerror
@@ -356,10 +335,10 @@ def get_signature_descr(room_id,mxid):
     log.debug("start function")
     time_execute=time.time()
     # формируем sql-запрос:
-    sql="select signature,signature_author,signature_time_create,signature_show,signature_description from tbl_users_info where room_id='%s' and mxid='%s'"%(room_id,mxid)
+    sql="select signature,signature_author,signature_time_create,signature_show,signature_description from tbl_users_info where room_id = %s and mxid= %s"
     log.debug("sql='%s'"%sql)
     try:
-      cur.execute(sql)
+      cur.execute(sql,(room_id,mxid))
       item = cur.fetchone()
     except psycopg2.Error as e:
       log.error("sql error: %s" % e.pgerror)
@@ -383,10 +362,10 @@ def check_user_exist(room_id,mxid):
     log.debug("start function")
     time_execute=time.time()
     # формируем sql-запрос:
-    sql="select count(user_id) from tbl_users_info where room_id='%s' and mxid='%s'"%(room_id,mxid)
+    sql="select count(user_id) from tbl_users_info where room_id = %s and mxid = %s"
     log.debug("sql='%s'"%sql)
     try:
-      cur.execute(sql)
+      cur.execute(sql,(room_id,mxid))
       item = cur.fetchone()
     except psycopg2.Error as e:
       log.error("sql error: %s" % e.pgerror)
@@ -422,22 +401,17 @@ def add_rule_interruption(room_id,mxid,rule_interruption_descr,mxid_author):
       insert into tbl_rule_interruptions
         (user_id, rule_interruption_author, description)
         VALUES
-        ((select user_id from tbl_users_info where mxid='%(mxid)s' and room_id='%(room_id)s'), '%(mxid_author)s', '%(rule_interruption_descr)s');
+        ((select user_id from tbl_users_info where mxid = %s and room_id = %s), %s, %s);
 
         update tbl_users_info set
           rule_interruption_active_count = rule_interruption_active_count + 1,
           rule_interruption_count_all = rule_interruption_count_all + 1
-          where mxid='%(mxid)s' and room_id='%(room_id)s';
+          where mxid = %s and room_id = %s;
     COMMIT;
-    """%{\
-      "room_id":room_id,\
-      "mxid":mxid,\
-      "rule_interruption_descr":rule_interruption_descr,\
-      "mxid_author":mxid_author\
-    }
+    """
     log.debug("sql='%s'"%sql)
     try:
-      cur.execute(sql)
+      cur.execute(sql,(mxid,room_id,mxid_author,rule_interruption_descr,mxid,room_id))
       conn.commit()
     except psycopg2.Error as e:
       global_error_descr="I am unable insert/update data: %s" % e.pgerror
@@ -465,10 +439,10 @@ def get_active_rule_interruption_count(room_id,mxid):
     log.debug("start function")
     time_execute=time.time()
     # формируем sql-запрос:
-    sql="select rule_interruption_active_count from tbl_users_info where room_id='%s' and mxid='%s'"%(room_id,mxid)
+    sql="select rule_interruption_active_count from tbl_users_info where room_id = %s and mxid = %s"
     log.debug("sql='%s'"%sql)
     try:
-      cur.execute(sql)
+      cur.execute(sql,(room_id,mxid))
       item = cur.fetchone()
     except psycopg2.Error as e:
       log.error("sql error: %s" % e.pgerror)
@@ -493,10 +467,10 @@ def get_rule_interruption_count(room_id,mxid,active=True):
     log.debug("start function")
     time_execute=time.time()
     # формируем sql-запрос:
-    sql="select count(*) from tbl_rule_interruptions where active_rule_interruption=%s and user_id=(select user_id from tbl_users_info where room_id='%s' and mxid='%s');"%(active,room_id,mxid)
+    sql="select count(*) from tbl_rule_interruptions where active_rule_interruption = %s and user_id=(select user_id from tbl_users_info where room_id = %s and mxid = %s);"
     log.debug("sql='%s'"%sql)
     try:
-      cur.execute(sql)
+      cur.execute(sql,(active,room_id,mxid))
       item = cur.fetchone()
     except psycopg2.Error as e:
       log.error("sql error: %s" % e.pgerror)
@@ -521,10 +495,10 @@ def get_rule_interruption_descr(room_id,mxid,active=True):
     log.debug("start function")
     time_execute=time.time()
     # формируем sql-запрос:
-    sql="select rule_interruption_author,time_create,description from tbl_rule_interruptions where active_rule_interruption=%s and user_id=(select user_id from tbl_users_info where room_id='%s' and mxid='%s');"%(active,room_id,mxid)
+    sql="select rule_interruption_author,time_create,description from tbl_rule_interruptions where active_rule_interruption = %s and user_id=(select user_id from tbl_users_info where room_id = %s and mxid = %s);"
     log.debug("sql='%s'"%sql)
     try:
-      cur.execute(sql)
+      cur.execute(sql,(active,room_id,mxid))
       item = cur.fetchall()
     except psycopg2.Error as e:
       log.error("sql error: %s" % e.pgerror)
@@ -556,19 +530,16 @@ def clear_active_rule_interruption(room_id,mxid):
       update tbl_rule_interruptions
         set active_rule_interruption=False
         where
-        user_id=(select user_id from tbl_users_info where mxid='%(mxid)s' and room_id='%(room_id)s');
+        user_id=(select user_id from tbl_users_info where mxid = %s and room_id = %s);
 
         update tbl_users_info set
           rule_interruption_active_count = 0
-          where mxid='%(mxid)s' and room_id='%(room_id)s';
+          where mxid = %s and room_id = %s;
     COMMIT;
-    """%{\
-      "room_id":room_id,\
-      "mxid":mxid\
-    }
+    """
     log.debug("sql='%s'"%sql)
     try:
-      cur.execute(sql)
+      cur.execute(sql,(mxid,room_id,mxid,room_id))
       conn.commit()
     except psycopg2.Error as e:
       log.error("I am unable update data: %s" % e.pgerror)
@@ -591,7 +562,7 @@ def add_user_descr(room_id,mxid,user_descr):
   global conn
   global cur
   log.debug("start function")
-  ret=check_user_exist(room_id,mxid) 
+  ret=check_user_exist(room_id,mxid)
   if ret is None:
     log.error("sql.check_user_exist()")
     return False
@@ -609,10 +580,10 @@ def update_user_descr(room_id,mxid,user_descr):
   try:
     log.debug("start function")
     # формируем sql-запрос:
-    sql="update tbl_users_info SET user_description='%s' where mxid='%s' and room_id='%s'"%(user_descr,mxid,room_id)
+    sql="update tbl_users_info SET user_description = %s where mxid = %s and room_id = %s "
     log.debug("sql='%s'"%sql)
     try:
-      cur.execute(sql)
+      cur.execute(sql,(user_descr,mxid,room_id))
       conn.commit()
     except psycopg2.Error as e:
       global_error_descr="I am unable update data to tbl_users_info: %s" % e.pgerror
@@ -640,17 +611,12 @@ def insert_user_descr(room_id,mxid,user_descr):
   try:
     log.debug("start function")
     # формируем sql-запрос:
-    columns = "mxid, room_id, user_description"
-    values = "'%(mxid)s','%(room_id)s', '%(user_descr)s'"%\
-      {\
-        "mxid":mxid,\
-        "room_id":room_id,\
-        "user_descr":user_descr\
-      }
-    sql="insert INTO tbl_users_info (%s) VALUES (%s) RETURNING user_id"%(columns,values)
+    sql="""insert INTO tbl_users_info
+    (mxid, room_id, user_description)
+    VALUES (%s, %s, %s) RETURNING user_id"""
     log.debug("sql='%s'"%sql)
     try:
-      cur.execute(sql)
+      cur.execute(sql,(mxid,room_id,user_descr))
       conn.commit()
       cur.execute('SELECT LASTVAL()')
       id_of_new_row = cur.fetchone()[0]
@@ -681,10 +647,10 @@ def get_user_descr(room_id,mxid):
     log.debug("start function")
     time_execute=time.time()
     # формируем sql-запрос:
-    sql="select user_description from tbl_users_info where room_id='%s' and mxid='%s'"%(room_id,mxid)
+    sql="select user_description from tbl_users_info where room_id = %s and mxid = %s"
     log.debug("sql='%s'"%sql)
     try:
-      cur.execute(sql)
+      cur.execute(sql,(room_id,mxid))
       item = cur.fetchone()
     except psycopg2.Error as e:
       log.error("sql error: %s" % e.pgerror)
