@@ -229,7 +229,7 @@ async def process_command(room,event,commandline):
           lang.install()
         except:
           # ошибка включения локали:
-          text="""unsupported locale name '%s'. Try 'en' or 'ru' for example."""%locale_name
+          text=_("unsupported locale name '%s'. Try 'en' or 'ru' for example.")%locale_name
           if await matrix_api.send_text(room,text) == False:
             log.error("matrix_api.send_text()")
             return False
@@ -237,7 +237,7 @@ async def process_command(room,event,commandline):
 
         if sql.set_room_setting(room.room_id, 'locale', locale_name) == False:
           log.error("sql.set_room_setting()")
-          text="""internal error sql.set_room_setting()"""
+          text=_("internal error in function: ") + "sql.set_room_setting()"
           if await matrix_api.send_text(room,text) == False:
             log.error("matrix_api.send_text()")
             return False
@@ -289,7 +289,7 @@ async def process_command(room,event,commandline):
           # пользователь указан по имени
           if len(room.names[signature_user])>1:
             # несколько пользователей с одинаковыми именами:
-            text="""nickname %s not uniqum in this room. Please, select user by mxid (as @user:server.com)"""%signature_user
+            text=_("nickname %s not uniqum in this room. Please, select user by mxid (as @user:server.com)")%signature_user
             log.warning(text)
             if await matrix_api.send_text(room,text) == False:
               log.error("matrix_api.send_text()")
@@ -300,7 +300,7 @@ async def process_command(room,event,commandline):
             signature_user_mxid = room.names[signature_user][0]
         else:
           # неизвестный пользователь:
-          text="""nickname %s not known. Please, correct, or select user by mxid (as @user:server.com)"""%signature_user
+          text=_("nickname %s not known. Please, correct, or select user by mxid (as @user:server.com)")%signature_user
           log.warning(text)
           if await matrix_api.send_text(room,text) == False:
             log.error("matrix_api.send_text()")
@@ -313,16 +313,16 @@ async def process_command(room,event,commandline):
 
         if sql.enable_signature(room.room_id, signature_user_mxid, enable_flag) == False:
           log.error("sql.enable_signature()")
-          text="""internal error sql.enable_signature()"""
+          text=_("internal error in function: ") + "sql.enable_signature()"
           if await matrix_api.send_text(room,text) == False:
             log.error("matrix_api.send_text()")
             return False
           return False
         # уведомляем пользователя, что всё получилось:
         if enable_flag == True:
-          text="""success enable signature to user %s"""%signature_user_mxid
+          text=_("success enable signature to user %s")%signature_user_mxid
         else:
-          text="""success disable signature to user %s"""%signature_user_mxid
+          text=_("success disable signature to user %s")%signature_user_mxid
         if await matrix_api.send_text(room,text) == False:
           log.error("matrix_api.send_text()")
           return False
@@ -365,7 +365,7 @@ async def process_command(room,event,commandline):
           # пользователь указан по имени
           if len(room.names[user_mxid])>1:
             # несколько пользователей с одинаковыми именами:
-            text="""nickname %s not uniqum in this room. Please, select user by mxid (as @user:server.com)"""%user_mxid
+            text=_("nickname %s not uniqum in this room. Please, select user by mxid (as @user:server.com)")%user_mxid
             log.warning(text)
             if await matrix_api.send_text(room,text) == False:
               log.error("matrix_api.send_text()")
@@ -376,7 +376,7 @@ async def process_command(room,event,commandline):
             user_mxid_mxid = room.names[user_mxid][0]
         else:
           # неизвестный пользователь:
-          text="""nickname %s not known. Please, correct, or select user by mxid (as @user:server.com)"""%user_mxid
+          text=_("nickname %s not known. Please, correct, or select user by mxid (as @user:server.com)")%user_mxid
           log.warning(text)
           if await matrix_api.send_text(room,text) == False:
             log.error("matrix_api.send_text()")
@@ -385,13 +385,13 @@ async def process_command(room,event,commandline):
         log.debug("user_mxid_mxid = %s"%user_mxid_mxid)
         if sql.add_rule_interruption(room.room_id, user_mxid_mxid, rule_interruption_descr, event.sender) == False:
           log.error("sql.add_rule_interruption()")
-          text="""internal error sql.add_rule_interruption()"""
+          text=_("internal error in function: ") + "sql.add_rule_interruption()"
           if await matrix_api.send_text(room,text) == False:
             log.error("matrix_api.send_text()")
             return False
           return False
         # уведомляем пользователя, что всё получилось:
-        text="""success add rule_interruption to user %s"""%user_mxid_mxid
+        text=_("""success add rule_interruption to user %s""")%user_mxid_mxid
         if await matrix_api.send_text(room,text) == False:
           log.error("matrix_api.send_text()")
           return False
@@ -435,7 +435,7 @@ async def process_command(room,event,commandline):
           # пользователь указан по имени
           if len(room.names[signature_user])>1:
             # несколько пользователей с одинаковыми именами:
-            text="""nickname %s not uniqum in this room. Please, select user by mxid (as @user:server.com)"""%signature_user
+            text=_("nickname %s not uniqum in this room. Please, select user by mxid (as @user:server.com)")%signature_user
             log.warning(text)
             if await matrix_api.send_text(room,text) == False:
               log.error("matrix_api.send_text()")
@@ -446,7 +446,7 @@ async def process_command(room,event,commandline):
             signature_user_mxid = room.names[signature_user][0]
         else:
           # неизвестный пользователь:
-          text="""nickname %s not known. Please, correct, or select user by mxid (as @user:server.com)"""%signature_user
+          text=_("nickname %s not known. Please, correct, or select user by mxid (as @user:server.com)")%signature_user
           log.warning(text)
           if await matrix_api.send_text(room,text) == False:
             log.error("matrix_api.send_text()")
@@ -455,13 +455,13 @@ async def process_command(room,event,commandline):
         log.debug("signature_user_mxid = %s"%signature_user_mxid)
         if sql.add_signature(room.room_id, signature_user_mxid, signature, event.sender, signature_descr ) == False:
           log.error("sql.add_signature()")
-          text="""internal error sql.add_signature()"""
+          text=_("internal error in function: ") + "sql.add_signature()"
           if await matrix_api.send_text(room,text) == False:
             log.error("matrix_api.send_text()")
             return False
           return False
         # уведомляем пользователя, что всё получилось:
-        text="""success add signature to user %s"""%signature_user_mxid
+        text=_("success add signature to user %s")%signature_user_mxid
         if await matrix_api.send_text(room,text) == False:
           log.error("matrix_api.send_text()")
           return False
@@ -496,7 +496,7 @@ async def process_command(room,event,commandline):
           # пользователь указан по имени
           if len(room.names[signature_user])>1:
             # несколько пользователей с одинаковыми именами:
-            text="""nickname %s not uniqum in this room. Please, select user by mxid (as @user:server.com)"""%signature_user
+            text=_("nickname %s not uniqum in this room. Please, select user by mxid (as @user:server.com)")%signature_user
             log.warning(text)
             if await matrix_api.send_text(room,text) == False:
               log.error("matrix_api.send_text()")
@@ -507,7 +507,7 @@ async def process_command(room,event,commandline):
             signature_user_mxid = room.names[signature_user][0]
         else:
           # неизвестный пользователь:
-          text="""nickname %s not known. Please, correct, or select user by mxid (as @user:server.com)"""%signature_user
+          text=_("nickname %s not known. Please, correct, or select user by mxid (as @user:server.com)")%signature_user
           log.warning(text)
           if await matrix_api.send_text(room,text) == False:
             log.error("matrix_api.send_text()")
@@ -590,7 +590,7 @@ async def process_command(room,event,commandline):
           # пользователь указан по имени
           if len(room.names[signature_user])>1:
             # несколько пользователей с одинаковыми именами:
-            text="""nickname %s not uniqum in this room. Please, select user by mxid (as @user:server.com)"""%signature_user
+            text=_("nickname %s not uniqum in this room. Please, select user by mxid (as @user:server.com)")%signature_user
             log.warning(text)
             if await matrix_api.send_text(room,text) == False:
               log.error("matrix_api.send_text()")
@@ -601,7 +601,7 @@ async def process_command(room,event,commandline):
             signature_user_mxid = room.names[signature_user][0]
         else:
           # неизвестный пользователь:
-          text="""nickname %s not known. Please, correct, or select user by mxid (as @user:server.com)"""%signature_user
+          text=_("nickname %s not known. Please, correct, or select user by mxid (as @user:server.com)")%signature_user
           log.warning(text)
           if await matrix_api.send_text(room,text) == False:
             log.error("matrix_api.send_text()")

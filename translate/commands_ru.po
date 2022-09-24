@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-09-06 21:51+1000\n"
-"PO-Revision-Date: 2022-09-06 21:51+1000\n"
+"POT-Creation-Date: 2022-09-24 10:50+1000\n"
+"PO-Revision-Date: 2022-09-24 12:10+1000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ru_RU\n"
@@ -109,6 +109,17 @@ msgstr ""
 "\n"
 "      "
 
+#: commands.py:232
+msgid "unsupported locale name '%s'. Try 'en' or 'ru' for example."
+msgstr "неподдерживаемое имя локали '%s'. Попробуйте 'en' или 'ru'."
+
+#: commands.py:240 commands.py:316 commands.py:388 commands.py:458
+#: commands.py:635 commands.py:708 commands.py:726 commands.py:803
+#: commands.py:821 commands.py:907 commands.py:952 commands.py:1014
+#: commands.py:1088
+msgid "internal error in function: "
+msgstr "внутренняя ошибка в функции: "
+
 #: commands.py:252
 msgid "enable_signature"
 msgstr "вкл_подпись"
@@ -140,9 +151,37 @@ msgstr ""
 "\n"
 "      \n"
 
+#: commands.py:292 commands.py:368 commands.py:438 commands.py:499
+#: commands.py:593 commands.py:686 commands.py:781 commands.py:886
+#: commands.py:992 commands.py:1067
+msgid ""
+"nickname %s not uniqum in this room. Please, select user by mxid (as @user:"
+"server.com)"
+msgstr ""
+"ник %s не уникален в этой комнате. Пожалуйста, выберите пользователя по mxid "
+"(т.е.: @user:server.com)"
+
+#: commands.py:303 commands.py:379 commands.py:449 commands.py:510
+#: commands.py:604 commands.py:697 commands.py:792 commands.py:897
+#: commands.py:1003 commands.py:1078
+msgid ""
+"nickname %s not known. Please, correct, or select user by mxid (as @user:"
+"server.com)"
+msgstr ""
+"ник %s неизвестен. Пожалуйста, скорректируйте его или выберите пользователя "
+"по его mxid (т.е. @user:server.com)"
+
 #: commands.py:311
 msgid "yes"
 msgstr "да"
+
+#: commands.py:323
+msgid "success enable signature to user %s"
+msgstr "успешно включил отображение подписи для пользователя %s"
+
+#: commands.py:325
+msgid "success disable signature to user %s"
+msgstr "успешно отключил отображение подписи для пользователя %s"
 
 #: commands.py:331
 msgid "add_rule_interruption"
@@ -174,6 +213,10 @@ msgstr ""
 "F9ch3eAZxlG2nUdakJXDMfYETdZVYCQ?via=matrix.org\"\n"
 "\n"
 
+#: commands.py:394
+msgid "success add rule_interruption to user %s"
+msgstr "успешно добавил замечание пользователю %s"
+
 #: commands.py:400
 msgid "add_signature"
 msgstr "подпись"
@@ -203,6 +246,10 @@ msgstr ""
 "  rsbot: подпись Максим провокатор \"вбрасывает лживые ссылки, признаёт это, "
 "но продолжает делать, чтобы наблюдать за реакцией других пользователей\"\n"
 "\n"
+
+#: commands.py:464
+msgid "success add signature to user %s"
+msgstr "успешно добавил подпись пользователю %s"
 
 #: commands.py:470
 msgid "show_signature"
@@ -294,12 +341,6 @@ msgstr ""
 msgid "no such user in db: %s"
 msgstr "нет такого пользователя в базе: %s"
 
-#: commands.py:635 commands.py:708 commands.py:726 commands.py:803
-#: commands.py:821 commands.py:907 commands.py:952 commands.py:1014
-#: commands.py:1088
-msgid "internal error in function: "
-msgstr "внутренняя ошибка в функции: "
-
 #: commands.py:643
 msgid ""
 "User %(signature_user_mxid)s have:\n"
@@ -342,24 +383,6 @@ msgstr ""
 "  rsbot: показать_описание_активных_замечаний Максим\n"
 "\n"
 "      "
-
-#: commands.py:686 commands.py:781 commands.py:886 commands.py:992
-#: commands.py:1067
-msgid ""
-"nickname %s not uniqum in this room. Please, select user by mxid (as @user:"
-"server.com)"
-msgstr ""
-"ник %s не уникален в этой комнате. Пожалуйста, выберите пользователя по mxid "
-"(т.е.: @user:server.com)"
-
-#: commands.py:697 commands.py:792 commands.py:897 commands.py:1003
-#: commands.py:1078
-msgid ""
-"nickname %s not known. Please, correct, or select user by mxid (as @user:"
-"server.com)"
-msgstr ""
-"ник %s неизвестен. Пожалуйста, скорректируйте его или выберите пользователя "
-"по его mxid (т.е. @user:server.com)"
 
 #: commands.py:734
 msgid "no active rule interruptions for user %s"
