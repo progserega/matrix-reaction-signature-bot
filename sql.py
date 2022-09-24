@@ -657,7 +657,7 @@ def get_user_descr(room_id,mxid):
       return None
     if item==None:
       log.debug("no user records for room_id=%s and mxid=%s"%(room_id,mxid))
-      return None
+      return ""
     log.debug("execute function time=%f"%(time.time()-time_execute))
     if item[0] is None:
       return ""
