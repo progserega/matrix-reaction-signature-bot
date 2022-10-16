@@ -406,6 +406,74 @@ async def process_command(room,event,commandline):
           return False
         return True
 
+    elif command == "clear_signature" or command == _("clear_signature"):
+      # проверяем права доступа:
+      if is_power_level_for(room,event.sender,"power_level_for_signature") == False:
+        log.warning("no power level for this")
+        text=_("you need more power level for this command")
+        log.warning(text)
+        if await matrix_api.send_text(room,text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return True
+
+      if len(parameters) < 1:
+        help_text=_("""command `clear_signature` need 1 params.
+  syntax:
+
+    my_botname_in_this_room: clear_signature user_name_for_signature
+
+  example:
+    rsbot: clear_signature goodUser
+
+""")
+        if await matrix_api.send_text(room,help_text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return True
+      else:
+        # параметров достаточно:
+        signature_user = parameters[0]
+
+        if signature_user in room.users:
+          # пользователь указан по MXID:
+          signature_user_mxid = signature_user
+        elif signature_user in room.names:
+          # пользователь указан по имени
+          if len(room.names[signature_user])>1:
+            # несколько пользователей с одинаковыми именами:
+            text=_("nickname %s not uniqum in this room. Please, select user by mxid (as @user:server.com)")%signature_user
+            log.warning(text)
+            if await matrix_api.send_text(room,text) == False:
+              log.error("matrix_api.send_text()")
+              return False
+            return True
+          else:
+            # пользователь указан по MXID:
+            signature_user_mxid = room.names[signature_user][0]
+        else:
+          # неизвестный пользователь:
+          text=_("nickname %s not known. Please, correct, or select user by mxid (as @user:server.com)")%signature_user
+          log.warning(text)
+          if await matrix_api.send_text(room,text) == False:
+            log.error("matrix_api.send_text()")
+            return False
+          return True
+        log.debug("signature_user_mxid = %s"%signature_user_mxid)
+        if sql.add_signature(room.room_id, signature_user_mxid, None, event.sender, None ) == False:
+          log.error("sql.add_signature()")
+          text=_("internal error in function: ") + "sql.add_signature()"
+          if await matrix_api.send_text(room,text) == False:
+            log.error("matrix_api.send_text()")
+            return False
+          return False
+        # уведомляем пользователя, что всё получилось:
+        text=_("success clear signature for user %s")%signature_user_mxid
+        if await matrix_api.send_text(room,text) == False:
+          log.error("matrix_api.send_text()")
+          return False
+        return True
+
     elif command == "add_signature" or command == _("add_signature"):
       # проверяем права доступа:
       if is_power_level_for(room,event.sender,"power_level_for_signature") == False:
