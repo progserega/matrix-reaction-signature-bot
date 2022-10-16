@@ -206,7 +206,7 @@ async def message_cb(room, event):
 
     # проверяем, есть ли подписи для автора:
     signature = sql.get_signature(room.room_id, event.sender)
-    if signature != None:
+    if signature != None and signature != "":
       if await matrix_api.send_emotion(room,event,signature) == False:
         log.error("matrix_api.send_emotion()")
         return False

@@ -651,6 +651,7 @@ def get_user_descr(room_id,mxid):
     log.debug("sql='%s'"%sql)
     try:
       cur.execute(sql,(room_id,mxid))
+      log.debug(cur.query.decode('utf-8'))
       item = cur.fetchone()
     except psycopg2.Error as e:
       log.error("sql error: %s" % e.pgerror)
