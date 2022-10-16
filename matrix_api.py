@@ -49,9 +49,9 @@ async def send_text(room,text):
     if isinstance(resp, nio.RoomMessagesError):
       log.warning("client.room_send() failed with response = {resp}.")
       return False
-    log.debug("st reaction successfully")
+    log.debug("send room.message successfully")
   except Exception:
-    log.error(f"set reaction failed.")
+    log.error(f"send room.message failed.")
     return False
   return True
 
@@ -71,7 +71,7 @@ async def send_emotion(room,event,emotion_text):
     if isinstance(resp, nio.RoomMessagesError):
       log.warning("client.room_send() failed with response = {resp}.")
       return False
-    log.debug("st reaction successfully")
+    log.debug("set reaction '%s' successfully"%emotion_text)
   except Exception:
     log.error(f"set reaction failed.")
     return False
