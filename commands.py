@@ -355,7 +355,7 @@ async def process_command(room,event,commandline):
     my_botname_in_this_room: add_rule_interruption user_name_for_inc_rule_interruption "description - Why rule is interrupt"
 
   example:
-    rsbot: add_signature Baduser "rule paragraph 3 at message url: https://matrix.to/#/!tBHU3434554VVVfuMP:matrix.org/$UV232444VR8-F9ch3eAZxlG2nUdakJXDMfYETdZVYCQ?via=matrix.org"
+    rsbot: add_rule_interruption Baduser "rule paragraph 3 at message url: https://matrix.to/#/!tBHU3434554VVVfuMP:matrix.org/$UV232444VR8-F9ch3eAZxlG2nUdakJXDMfYETdZVYCQ?via=matrix.org"
 
 """)
         if await matrix_api.send_text(room,help_text) == False:
