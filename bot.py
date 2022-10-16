@@ -33,23 +33,6 @@ def get_exception_traceback_descr(e):
   else:
     return e
 
-async def send_emotion(room_id,event_id,emotion_text):
-  global config
-  global client
-  global log
-  content = {
-        "m.relates_to": {
-          "event_id": event_id,
-          "key": emotion_text,
-          "rel_type": "m.annotation"
-        }
-    }
-  try:
-      await client.room_send(room_id, message_type="m.reaction", content=content)
-      log.debug("set reaction '%s' successfully"%emotion_text)
-  except Exception:
-      log.error(f"set reaction failed.")
-
 async def unknown_cb(room, event):
   global config
   global client
