@@ -187,15 +187,16 @@ async def process_command(room,event,commandline):
   2. add_signature - add signature to user
   3. enable_signature - enable/disable showing signature for user
   4. show_signature - show signature for user
-  5. add_rule_interruption - increment rule interruption
-  6. show_rule_interruption_stat - show active/all rule interruption count for user
-  6. show_active_rule_interruption_descr - show active rule interruption description (for all interruption) - be cafule with many active interruption for user - bot will spam messages
-  7. show_old_rule_interruption_descr - show old (not active) rule interruption description (for all old interruption) - be cafule with many old not active interruption for user - bot will spam messages
-  8. clear_active_rule_interruption - clear active rule interruption count (when unban user)
-  9. set_locale - change language of bot for this room
-  10. set_my_descr - set own description for user (can do only mxid for it's mxid)
-  11. show_user_descr - show description for user
-  12. clear_user_descr - clear description for user
+  5. clear_signature - clear signature for user
+  6. add_rule_interruption - increment rule interruption
+  7. show_rule_interruption_stat - show active/all rule interruption count for user
+  8. show_active_rule_interruption_descr - show active rule interruption description (for all interruption) - be cafule with many active interruption for user - bot will spam messages
+  9. show_old_rule_interruption_descr - show old (not active) rule interruption description (for all old interruption) - be cafule with many old not active interruption for user - bot will spam messages
+  10. clear_active_rule_interruption - clear active rule interruption count (when unban user)
+  11. set_locale - change language of bot for this room
+  12. set_my_descr - set own description for user (can do only mxid for it's mxid)
+  13. show_user_descr - show description for user
+  14. clear_user_descr - clear description for user
       """)
       if await matrix_api.send_text(room,help_text) == False:
         log.error("matrix_api.send_text()")

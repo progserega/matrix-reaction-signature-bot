@@ -46,7 +46,7 @@ async def send_emotion(room_id,event_id,emotion_text):
     }
   try:
       await client.room_send(room_id, message_type="m.reaction", content=content)
-      log.debug("st reaction successfully")
+      log.debug("set reaction '%s' successfully"%emotion_text)
   except Exception:
       log.error(f"set reaction failed.")
 
