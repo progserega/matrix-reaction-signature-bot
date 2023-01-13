@@ -186,7 +186,7 @@ async def process_command(room,event,commandline):
       command = "help"
       parameters = []
     else:
-      command = param_list[0]
+      command = param_list[0].lower()
       parameters = param_list[1:]
     #=========== help command =========
     if command == "help" or command == _("help"):
