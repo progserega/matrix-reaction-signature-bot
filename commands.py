@@ -137,8 +137,16 @@ def is_power_level_for(room,mxid,power_level_options="power_level_for_signature"
         log.warning("unknown power_level alias in config - set default as 'ban'")
         # значение по-умолчанию - 'ban':
         need_power_level_integer = room.power_levels.defaults.ban
-    # прповеряем - есть ли нужные права у пользователя:
-    if room.power_levels.users[mxid] >= need_power_level_integer:
+    # проверяем - есть ли нужные права у пользователя:
+    # по-умолчанию - стандартные права доступа:
+    user_power_level = room.power_levels.defaults.users_default
+    log.debug("base power level for users in this room: %d"%user_power_level)
+    if mxid in room.power_levels.users:
+      # если у пользователя они особые, то берём особые:
+      user_power_level = room.power_levels.users[mxid]
+      log.debug("user '%s' have uniqum power level in this room: %d"%(mxid,user_power_level))
+    log.debug("need power_level=%d, user have power_level=%d"%(need_power_level_integer,user_power_level))
+    if user_power_level >= need_power_level_integer:
       return True
     else:
       return False
