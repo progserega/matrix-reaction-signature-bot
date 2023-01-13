@@ -3,6 +3,7 @@
 * reconnect to postgres if postgres was restart
 * fix check power levels for standart users (fail for non priv users)
 * add command check version
+* remove case sensitive for commands
 
 # v1.0.5 (2022-10-17)
 * translates
