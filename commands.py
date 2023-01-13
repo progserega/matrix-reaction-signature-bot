@@ -223,7 +223,7 @@ async def process_command(room,event,commandline):
       for line in f:
         if line_count > 20:
           log.warning("too long version descr - crop...")
-          ver_descr+="too long version descr - crop...\n"
+          ver_descr+=_("too long version descr - crop...\n")
           break
         if re.search("^#.*",line) is None:
           if found_ver_descr == True:
@@ -237,7 +237,7 @@ async def process_command(room,event,commandline):
           found_ver_descr = True
           ver_descr += line
           line_count+=1
-      ver_descr+="See full version at: https://github.com/progserega/matrix-reaction-signature-bot/blob/main/CHANGELOG.md"
+      ver_descr+=_("See full version at: https://github.com/progserega/matrix-reaction-signature-bot/blob/main/CHANGELOG.md")
 
       text=_("Version of bot:\n%s"%ver_descr)
       if await matrix_api.send_text(room,text) == False:
