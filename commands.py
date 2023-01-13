@@ -205,8 +205,42 @@ async def process_command(room,event,commandline):
   12. set_my_descr - set own description for user (can do only mxid for it's mxid)
   13. show_user_descr - show description for user
   14. clear_user_descr - clear description for user
+  15. version - show version
       """)
       if await matrix_api.send_text(room,help_text) == False:
+        log.error("matrix_api.send_text()")
+        return False
+      return True
+
+    elif command == "version" or command == _("version"):
+      # проверяем права доступа:
+      cwd = os.getcwd()
+      f = open("%s/CHANGELOG.md"%cwd,"r")
+      ver_descr=""
+      found_ver_descr=False
+      line_count=0
+      # берём описание последней версии:
+      for line in f:
+        if line_count > 20:
+          log.warning("too long version descr - crop...")
+          ver_descr+="too long version descr - crop...\n"
+          break
+        if re.search("^#.*",line) is None:
+          if found_ver_descr == True:
+            ver_descr += line
+            line_count+=1
+          continue
+        if found_ver_descr == True:
+          # нашли конец первого описания - выходим
+          break
+        else:
+          found_ver_descr = True
+          ver_descr += line
+          line_count+=1
+      ver_descr+="See full version at: https://github.com/progserega/matrix-reaction-signature-bot/blob/main/CHANGELOG.md"
+
+      text=_("Version of bot:\n%s"%ver_descr)
+      if await matrix_api.send_text(room,text) == False:
         log.error("matrix_api.send_text()")
         return False
       return True
