@@ -57,6 +57,9 @@ def connect_to_db():
   try:
     log.debug("start function")
     log.debug("connect to: dbname='" + db_params.get('dbname','') + "' user='" + db_params.get('user','') + "' host='" + db_params.get('host','') + "' password='" + db_params.get('password','') + "'")
+    if conn is not None:
+      log.warning("conn != None - close connection befor reconnect")
+      conn.close()
     conn = psycopg2.connect(**db_params)
     cur = conn.cursor()
   except Exception as e:
@@ -90,6 +93,9 @@ def update_signature(room_id,mxid,signature,signature_author,signature_descr):
         conn.rollback()
       except psycopg2.Error as e:
         log.error("sql error: %s" % e.pgerror)
+        log.warning("try reconnect to db")
+        if connect_to_db() == False:
+          log.error("error connect to db")
         return False
       return False
 
@@ -127,6 +133,9 @@ def insert_signature(room_id,mxid,signature,signature_author,signature_descr):
         conn.rollback()
       except psycopg2.Error as e:
         log.error("sql error: %s" % e.pgerror)
+        log.warning("try reconnect to db")
+        if connect_to_db() == False:
+          log.error("error connect to db")
         return False
       return False
 
@@ -157,6 +166,9 @@ def enable_signature(room_id,mxid,enable_flag):
         conn.rollback()
       except psycopg2.Error as e:
         log.error("sql error: %s" % e.pgerror)
+        log.warning("try reconnect to db")
+        if connect_to_db() == False:
+          log.error("error connect to db")
         return False
       return False
 
@@ -199,6 +211,9 @@ def get_signature(room_id,mxid):
       item = cur.fetchone()
     except psycopg2.Error as e:
       log.error("sql error: %s" % e.pgerror)
+      log.warning("try reconnect to db")
+      if connect_to_db() == False:
+        log.error("error connect to db")
       return None
     if item==None:
       log.debug("no signature records for room_id=%s and mxid=%s"%(room_id,mxid))
@@ -226,6 +241,9 @@ def get_room_settings(room_id):
       item = cur.fetchall()
     except psycopg2.Error as e:
       log.error("sql error: %s" % e.pgerror)
+      log.warning("try reconnect to db")
+      if connect_to_db() == False:
+        log.error("error connect to db")
       return None
     if item==None:
       log.debug("no settings for room %s"%room_id)
@@ -260,6 +278,9 @@ ON CONFLICT (name) DO UPDATE SET value = %s;
         conn.rollback()
       except psycopg2.Error as e:
         log.error("sql error: %s" % e.pgerror)
+        log.warning("try reconnect to db")
+        if connect_to_db() == False:
+          log.error("error connect to db")
         return False
       return False
   except Exception as e:
@@ -291,6 +312,9 @@ ON CONFLICT (room_id,name) DO UPDATE SET value = %s;
         conn.rollback()
       except psycopg2.Error as e:
         log.error("sql error: %s" % e.pgerror)
+        log.warning("try reconnect to db")
+        if connect_to_db() == False:
+          log.error("error connect to db")
         return False
       return False
   except Exception as e:
@@ -315,6 +339,9 @@ def get_global_settings():
       item = cur.fetchall()
     except psycopg2.Error as e:
       log.error("sql error: %s" % e.pgerror)
+      log.warning("try reconnect to db")
+      if connect_to_db() == False:
+        log.error("error connect to db")
       return None
     if item==None:
       log.debug("no global settings")
@@ -342,6 +369,9 @@ def get_signature_descr(room_id,mxid):
       item = cur.fetchone()
     except psycopg2.Error as e:
       log.error("sql error: %s" % e.pgerror)
+      log.warning("try reconnect to db")
+      if connect_to_db() == False:
+        log.error("error connect to db")
       return None
     if item==None:
       log.debug("no signature records for room_id=%s and mxid=%s"%(room_id,mxid))
@@ -369,6 +399,9 @@ def check_user_exist(room_id,mxid):
       item = cur.fetchone()
     except psycopg2.Error as e:
       log.error("sql error: %s" % e.pgerror)
+      log.warning("try reconnect to db")
+      if connect_to_db() == False:
+        log.error("error connect to db")
       return None
     if item[0]==0:
       log.debug("no user records for room_id=%s and mxid=%s"%(room_id,mxid))
@@ -421,6 +454,9 @@ def add_rule_interruption(room_id,mxid,rule_interruption_descr,mxid_author):
         conn.rollback()
       except psycopg2.Error as e:
         log.error("sql error: %s" % e.pgerror)
+        log.warning("try reconnect to db")
+        if connect_to_db() == False:
+          log.error("error connect to db")
         return False
       return False
   except Exception as e:
@@ -446,6 +482,9 @@ def get_active_rule_interruption_count(room_id,mxid):
       item = cur.fetchone()
     except psycopg2.Error as e:
       log.error("sql error: %s" % e.pgerror)
+      log.warning("try reconnect to db")
+      if connect_to_db() == False:
+        log.error("error connect to db")
       return None
     if item==None:
       log.debug("no interruption records for room_id=%s and mxid=%s"%(room_id,mxid))
@@ -474,6 +513,9 @@ def get_rule_interruption_count(room_id,mxid,active=True):
       item = cur.fetchone()
     except psycopg2.Error as e:
       log.error("sql error: %s" % e.pgerror)
+      log.warning("try reconnect to db")
+      if connect_to_db() == False:
+        log.error("error connect to db")
       return None
     if item==None:
       log.debug("no interruption records for room_id=%s and mxid=%s"%(room_id,mxid))
@@ -502,6 +544,9 @@ def get_rule_interruption_descr(room_id,mxid,active=True):
       item = cur.fetchall()
     except psycopg2.Error as e:
       log.error("sql error: %s" % e.pgerror)
+      log.warning("try reconnect to db")
+      if connect_to_db() == False:
+        log.error("error connect to db")
       return None
     if item==None:
       log.debug("no interruption records for room_id=%s and mxid=%s"%(room_id,mxid))
@@ -548,6 +593,9 @@ def clear_active_rule_interruption(room_id,mxid):
         conn.rollback()
       except psycopg2.Error as e:
         log.error("sql error: %s" % e.pgerror)
+        log.warning("try reconnect to db")
+        if connect_to_db() == False:
+          log.error("error connect to db")
         return False
       return False
   except Exception as e:
@@ -593,6 +641,9 @@ def update_user_descr(room_id,mxid,user_descr):
         conn.rollback()
       except psycopg2.Error as e:
         log.error("sql error: %s" % e.pgerror)
+        log.warning("try reconnect to db")
+        if connect_to_db() == False:
+          log.error("error connect to db")
         return False
       return False
   except Exception as e:
@@ -628,6 +679,9 @@ def insert_user_descr(room_id,mxid,user_descr):
         conn.rollback()
       except psycopg2.Error as e:
         log.error("sql error: %s" % e.pgerror)
+        log.warning("try reconnect to db")
+        if connect_to_db() == False:
+          log.error("error connect to db")
         return False
       return False
   except Exception as e:
@@ -655,6 +709,9 @@ def get_user_descr(room_id,mxid):
       item = cur.fetchone()
     except psycopg2.Error as e:
       log.error("sql error: %s" % e.pgerror)
+      log.warning("try reconnect to db")
+      if connect_to_db() == False:
+        log.error("error connect to db")
       return None
     if item==None:
       log.debug("no user records for room_id=%s and mxid=%s"%(room_id,mxid))
