@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-01-13 22:14+1000\n"
-"PO-Revision-Date: 2023-01-13 22:17+1000\n"
+"POT-Creation-Date: 2023-01-13 22:20+1000\n"
+"PO-Revision-Date: 2023-01-13 22:21+1000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ru_RU\n"
@@ -92,6 +92,14 @@ msgid ""
 msgstr ""
 "Смотрите полное описание историй версий на сайте: https://github.com/"
 "progserega/matrix-reaction-signature-bot/blob/main/CHANGELOG.md"
+
+#: commands.py:242
+msgid ""
+"Version of bot:\n"
+"%s"
+msgstr ""
+"Версия бота:\n"
+"%s"
 
 #: commands.py:248
 msgid "set_locale"

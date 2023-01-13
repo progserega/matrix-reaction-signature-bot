@@ -239,7 +239,7 @@ async def process_command(room,event,commandline):
           line_count+=1
       ver_descr+=_("See full version at: https://github.com/progserega/matrix-reaction-signature-bot/blob/main/CHANGELOG.md")
 
-      text=_("Version of bot:\n%s"%ver_descr)
+      text=_("Version of bot:\n%s")%ver_descr
       if await matrix_api.send_text(room,text) == False:
         log.error("matrix_api.send_text()")
         return False
