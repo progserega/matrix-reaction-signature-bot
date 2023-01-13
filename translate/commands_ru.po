@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-10-17 09:43+1000\n"
-"PO-Revision-Date: 2022-10-17 09:48+1000\n"
+"POT-Creation-Date: 2023-01-13 22:14+1000\n"
+"PO-Revision-Date: 2023-01-13 22:17+1000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ru_RU\n"
@@ -18,11 +18,11 @@ msgstr ""
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 "X-Generator: Poedit 2.3\n"
 
-#: commands.py:184
+#: commands.py:192
 msgid "help"
 msgstr "помощь"
 
-#: commands.py:185
+#: commands.py:193
 msgid ""
 "I am admin reaction bot.\n"
 "  1. help - this help\n"
@@ -46,6 +46,7 @@ msgid ""
 "mxid)\n"
 "  13. show_user_descr - show description for user\n"
 "  14. clear_user_descr - clear description for user\n"
+"  15. version - show version\n"
 "      "
 msgstr ""
 "Я информационный бот.\n"
@@ -74,18 +75,34 @@ msgstr ""
 "пользователя\n"
 "  14. очистить_описание_пользователя - очистить описание другого "
 "пользователя\n"
-"      "
+"  15. версия - показать описание версии"
 
-#: commands.py:206
+#: commands.py:215
+msgid "version"
+msgstr "версия"
+
+#: commands.py:226
+msgid "too long version descr - crop...\n"
+msgstr "слишком длинное описание версии - обрезаю...\n"
+
+#: commands.py:240
+msgid ""
+"See full version at: https://github.com/progserega/matrix-reaction-signature-"
+"bot/blob/main/CHANGELOG.md"
+msgstr ""
+"Смотрите полное описание историй версий на сайте: https://github.com/"
+"progserega/matrix-reaction-signature-bot/blob/main/CHANGELOG.md"
+
+#: commands.py:248
 msgid "set_locale"
 msgstr "язык"
 
-#: commands.py:210 commands.py:265 commands.py:344 commands.py:413
-#: commands.py:481 commands.py:928 commands.py:1000 commands.py:1111
+#: commands.py:252 commands.py:307 commands.py:386 commands.py:455
+#: commands.py:523 commands.py:970 commands.py:1042 commands.py:1153
 msgid "you need more power level for this command"
 msgstr "вам не хватает прав для выполнения этой команды"
 
-#: commands.py:218
+#: commands.py:260
 msgid ""
 "This command allow switch language for this room.\n"
 "\n"
@@ -111,22 +128,22 @@ msgstr ""
 "\n"
 "      "
 
-#: commands.py:241
+#: commands.py:283
 msgid "unsupported locale name '%s'. Try 'en' or 'ru' for example."
 msgstr "неподдерживаемое имя локали '%s'. Попробуйте 'en' или 'ru'."
 
-#: commands.py:249 commands.py:325 commands.py:397 commands.py:465
-#: commands.py:535 commands.py:712 commands.py:785 commands.py:803
-#: commands.py:880 commands.py:898 commands.py:984 commands.py:1029
-#: commands.py:1091 commands.py:1165
+#: commands.py:291 commands.py:367 commands.py:439 commands.py:507
+#: commands.py:577 commands.py:754 commands.py:827 commands.py:845
+#: commands.py:922 commands.py:940 commands.py:1026 commands.py:1071
+#: commands.py:1133 commands.py:1207
 msgid "internal error in function: "
 msgstr "внутренняя ошибка в функции: "
 
-#: commands.py:261
+#: commands.py:303
 msgid "enable_signature"
 msgstr "вкл_подпись"
 
-#: commands.py:273
+#: commands.py:315
 msgid ""
 "This command disable or enable showing signature for user.\n"
 "  Disabling - is not delete signature in db, but it will not be show.\n"
@@ -153,9 +170,9 @@ msgstr ""
 "\n"
 "      \n"
 
-#: commands.py:301 commands.py:377 commands.py:445 commands.py:515
-#: commands.py:576 commands.py:670 commands.py:763 commands.py:858
-#: commands.py:963 commands.py:1069 commands.py:1144
+#: commands.py:343 commands.py:419 commands.py:487 commands.py:557
+#: commands.py:618 commands.py:712 commands.py:805 commands.py:900
+#: commands.py:1005 commands.py:1111 commands.py:1186
 msgid ""
 "nickname %s not uniqum in this room. Please, select user by mxid (as @user:"
 "server.com)"
@@ -163,9 +180,9 @@ msgstr ""
 "ник %s не уникален в этой комнате. Пожалуйста, выберите пользователя по mxid "
 "(т.е.: @user:server.com)"
 
-#: commands.py:312 commands.py:388 commands.py:456 commands.py:526
-#: commands.py:587 commands.py:681 commands.py:774 commands.py:869
-#: commands.py:974 commands.py:1080 commands.py:1155
+#: commands.py:354 commands.py:430 commands.py:498 commands.py:568
+#: commands.py:629 commands.py:723 commands.py:816 commands.py:911
+#: commands.py:1016 commands.py:1122 commands.py:1197
 msgid ""
 "nickname %s not known. Please, correct, or select user by mxid (as @user:"
 "server.com)"
@@ -173,23 +190,23 @@ msgstr ""
 "ник %s неизвестен. Пожалуйста, скорректируйте его или выберите пользователя "
 "по его mxid (т.е. @user:server.com)"
 
-#: commands.py:320
+#: commands.py:362
 msgid "yes"
 msgstr "да"
 
-#: commands.py:332
+#: commands.py:374
 msgid "success enable signature to user %s"
 msgstr "успешно включил отображение подписи для пользователя %s"
 
-#: commands.py:334
+#: commands.py:376
 msgid "success disable signature to user %s"
 msgstr "успешно отключил отображение подписи для пользователя %s"
 
-#: commands.py:340
+#: commands.py:382
 msgid "add_rule_interruption"
 msgstr "замечание"
 
-#: commands.py:352
+#: commands.py:394
 msgid ""
 "command `add_rule_interruption` need 2 params.\n"
 "  syntax:\n"
@@ -215,15 +232,15 @@ msgstr ""
 "F9ch3eAZxlG2nUdakJXDMfYETdZVYCQ?via=matrix.org\"\n"
 "\n"
 
-#: commands.py:403
+#: commands.py:445
 msgid "success add rule_interruption to user %s"
 msgstr "успешно добавил замечание пользователю %s"
 
-#: commands.py:409
+#: commands.py:451
 msgid "clear_signature"
 msgstr "очистка_подписи"
 
-#: commands.py:421
+#: commands.py:463
 msgid ""
 "command `clear_signature` need 1 params.\n"
 "  syntax:\n"
@@ -246,15 +263,15 @@ msgstr ""
 "\n"
 "      \n"
 
-#: commands.py:471
+#: commands.py:513
 msgid "success clear signature for user %s"
 msgstr "успешно очистил подпись у пользователя %s"
 
-#: commands.py:477
+#: commands.py:519
 msgid "add_signature"
 msgstr "подпись"
 
-#: commands.py:489
+#: commands.py:531
 msgid ""
 "command `add_signature` need 3 params.\n"
 "  syntax:\n"
@@ -280,15 +297,15 @@ msgstr ""
 "но продолжает делать, чтобы наблюдать за реакцией других пользователей\"\n"
 "\n"
 
-#: commands.py:541
+#: commands.py:583
 msgid "success add signature to user %s"
 msgstr "успешно добавил подпись пользователю %s"
 
-#: commands.py:547
+#: commands.py:589
 msgid "show_signature"
 msgstr "показать_подпись"
 
-#: commands.py:550
+#: commands.py:592
 msgid ""
 "This command show signature record for user.\n"
 "\n"
@@ -314,15 +331,15 @@ msgstr ""
 "\n"
 "      "
 
-#: commands.py:598 commands.py:692
+#: commands.py:640 commands.py:734
 msgid "internal error sql.check_user_exist()"
 msgstr "внутренняя ошибка sql.check_user_exist()"
 
-#: commands.py:615
+#: commands.py:657
 msgid "internal error sql.get_signature_descr()"
 msgstr "внутренняя ошибка sql.get_signature_descr()"
 
-#: commands.py:621
+#: commands.py:663
 msgid ""
 "User %(signature_user_mxid)s:\n"
 "  1. signature: %(signature)s\n"
@@ -340,11 +357,11 @@ msgstr ""
 "5. Описание подписи: %(signature_descr)s\n"
 " "
 
-#: commands.py:641
+#: commands.py:683
 msgid "show_rule_interruption_stat"
 msgstr "статистика_замечаний"
 
-#: commands.py:644
+#: commands.py:686
 msgid ""
 "This command show rule interruption stat for user.\n"
 "\n"
@@ -370,11 +387,11 @@ msgstr ""
 "\n"
 "      "
 
-#: commands.py:698 commands.py:791 commands.py:886
+#: commands.py:740 commands.py:833 commands.py:928
 msgid "no such user in db: %s"
 msgstr "нет такого пользователя в базе: %s"
 
-#: commands.py:720
+#: commands.py:762
 msgid ""
 "User %(signature_user_mxid)s have:\n"
 "  1. active rule interruption: %(active_rule_interruption)d\n"
@@ -386,11 +403,11 @@ msgstr ""
 "  2. Всего замечаний: %(all_rule_interruption)d\n"
 "  "
 
-#: commands.py:734
+#: commands.py:776
 msgid "show_active_rule_interruption_descr"
 msgstr "показать_описание_активных_замечаний"
 
-#: commands.py:737
+#: commands.py:779
 msgid ""
 "This command show description for active rule interruption for user.\n"
 "\n"
@@ -417,11 +434,11 @@ msgstr ""
 "\n"
 "      "
 
-#: commands.py:811
+#: commands.py:853
 msgid "no active rule interruptions for user %s"
 msgstr "нет активных замечаний у пользователя %s"
 
-#: commands.py:817 commands.py:912
+#: commands.py:859 commands.py:954
 msgid ""
 "Admin %(admin)s at %(date)s add rule interruption by user "
 "%(signature_user_mxid)s with descr: %(descr)s"
@@ -429,11 +446,11 @@ msgstr ""
 "Администратор %(admin)s в %(date)s добавил замечание пользователю "
 "%(signature_user_mxid)s со следующим описанием: %(descr)s"
 
-#: commands.py:829
+#: commands.py:871
 msgid "show_old_rule_interruption_descr"
 msgstr "показать_описание_неактивных_замечаний"
 
-#: commands.py:832
+#: commands.py:874
 msgid ""
 "This command show description for old (not active) rule interruption for "
 "user.\n"
@@ -461,15 +478,15 @@ msgstr ""
 "\n"
 "      "
 
-#: commands.py:906
+#: commands.py:948
 msgid "no old rule interruptions for user %s"
 msgstr "нет старых (неактивных) замечаний для пользователя %s"
 
-#: commands.py:924
+#: commands.py:966
 msgid "clear_active_rule_interruption"
 msgstr "очистить_счётчик_активных_замечаний"
 
-#: commands.py:936
+#: commands.py:978
 msgid ""
 "This command clear active rule interruptions for user.\n"
 "  They will become as not active.\n"
@@ -496,15 +513,15 @@ msgstr ""
 "\n"
 "      \n"
 
-#: commands.py:990
+#: commands.py:1032
 msgid "success clear active rule interruptions for user %s"
 msgstr "успешно очистил счётчик активных нарушений для пользователя %s"
 
-#: commands.py:996
+#: commands.py:1038
 msgid "set_my_descr"
 msgstr "установить_моё_описание"
 
-#: commands.py:1008
+#: commands.py:1050
 msgid ""
 "command `set_my_descr` need 1 params.\n"
 "Command set own description for user. This can do only some user for self.\n"
@@ -530,15 +547,15 @@ msgstr ""
 "\n"
 "      \n"
 
-#: commands.py:1035
+#: commands.py:1077
 msgid "success add user_descr to user %s"
 msgstr "успешно установил описание для пользователя %s"
 
-#: commands.py:1041
+#: commands.py:1083
 msgid "show_user_descr"
 msgstr "показать_описание_пользователя"
 
-#: commands.py:1043
+#: commands.py:1085
 msgid ""
 "command `show_user_descr` need 1 params.\n"
 "Command show own description for user. This description was seted user for "
@@ -564,11 +581,11 @@ msgstr ""
 "  rsbot: показать_описание_пользователя Максим\n"
 "\n"
 
-#: commands.py:1098
+#: commands.py:1140
 msgid "User '%s' has no own description"
 msgstr "Пользователь '%s' не имеет собственного описания"
 
-#: commands.py:1100
+#: commands.py:1142
 msgid ""
 "User description for user '%s' is:\n"
 "%s"
@@ -576,11 +593,11 @@ msgstr ""
 "Собственное описание пользователя '%s':\n"
 "%s"
 
-#: commands.py:1107
+#: commands.py:1149
 msgid "clear_user_descr"
 msgstr "очистить_описание_пользователя"
 
-#: commands.py:1119
+#: commands.py:1161
 msgid ""
 "This command clear user description. This can do only administrator or "
 "moderator.\n"
@@ -608,11 +625,11 @@ msgstr ""
 "\n"
 "      "
 
-#: commands.py:1171
+#: commands.py:1213
 msgid "success clear user_descr to user %s"
 msgstr "успешно очистил описание пользователя %s"
 
-#: commands.py:1179
+#: commands.py:1221
 msgid ""
 "unknown command!\n"
 "  Please, use 'help' or empty command (only my room nick name) for help.\n"
